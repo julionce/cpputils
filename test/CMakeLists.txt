@@ -15,21 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with vaneins::cpputils.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+include(CTest)
+include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/Catch.cmake)
+include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/ParseAndAddCatchTests.cmake)
 
-project(utils VERSION "0.1.0" LANGUAGES CXX)
-
-add_library(utils INTERFACE)
-
-add_library(vaneins::utils ALIAS utils)
-
-target_include_directories(${PROJECT_NAME}
-    INTERFACE
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    )
-
-###############################################################################
-# Tests.
-###############################################################################
-add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/catch2)
-add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+add_subdirectory(reference)
