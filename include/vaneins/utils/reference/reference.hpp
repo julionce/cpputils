@@ -20,60 +20,30 @@
 #ifndef VANEINS_UTILS_REFERENCE_REFERENCE_HPP_
 #define VANEINS_UTILS_REFERENCE_REFERENCE_HPP_
 
-#include <memory>
-#include <utility>
+#include <vaneins/utils/reference/reference_base.hpp>
 
 namespace vaneins {
 namespace utils {
 
 template<typename T>
-class Reference
+class Reference : public ReferenceBase<T>
 {
+    using ReferenceBase<T>::ReferenceBase;
 public:
-    Reference() = default;
-
-    template<typename R>
-    Reference(R&& impl);
-
-    ~Reference() = default;
+    virtual ~Reference() = default;
 
     Reference(Reference&& other) = default;
     Reference(const Reference& other) = default;
     Reference& operator=(Reference&& other) = default;
     Reference& operator=(const Reference& other) = default;
 
-    bool is_null() const;
-    
-    operator bool() const;
-
     T* operator->();
-
-private:
-    std::shared_ptr<T> impl_;
 };
-
-template<typename T>
-template<typename R>
-inline Reference<T>::Reference(R&& impl)
-    : impl_{std::forward<R>(impl)}
-{}
-
-template<typename T>
-inline bool Reference<T>::is_null() const
-{
-    return !bool(impl_);
-}
-
-template<typename T>
-Reference<T>::operator bool() const
-{
-    return bool(impl_);
-}
 
 template<typename T>
 T* Reference<T>::operator->()
 {
-    return impl_.get();
+    return this->impl_.get();
 }
 
 } // namespace utils
