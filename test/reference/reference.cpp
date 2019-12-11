@@ -19,23 +19,26 @@
 #define CATCH_CONFIG_MAIN
 
 #include <vaneins/utils/reference/reference.hpp>
+#include <vaneins/utils/reference/const_reference.hpp>
 
 #include <catch2/catch.hpp>
 
 struct MyReferenceImpl 
 {
     void set_value(uint8_t value) { value_ = value; }
-    uint8_t get_value() { return value_; }
+    uint8_t get_value() const { return value_; }
 
 private:
-    uint8_t value_;
+    uint8_t value_ = 0;
 };
 
+using MyReferenceBase = vaneins::utils::ReferenceBase<MyReferenceImpl>;
 using MyReference = vaneins::utils::Reference<MyReferenceImpl>;
+using MyConstReference = vaneins::utils::ConstReference<MyReferenceImpl>;
 
 SCENARIO("general")
 {
-    GIVEN("an empty reference")    
+    GIVEN("an empty ReferenceBase")
     {
         std::shared_ptr<int> a;
         std::shared_ptr<int> b(new int());
@@ -48,7 +51,7 @@ SCENARIO("general")
         REQUIRE(my_reference.is_null());
         REQUIRE_FALSE(my_reference);
 
-        WHEN("a reference is created by a prvalue")
+        WHEN("a ReferenceBase is created by a prvalue")
         {
             MyReference my_second_reference(std::shared_ptr<MyReferenceImpl>(new MyReferenceImpl()));
             REQUIRE_FALSE(my_second_reference.is_null());
@@ -73,7 +76,7 @@ SCENARIO("general")
             }
         }
 
-        WHEN("a reference is created by a lvalue")
+        WHEN("a ReferenceBase is created by a lvalue")
         {
             std::shared_ptr<MyReferenceImpl> my_reference_impl(new MyReferenceImpl());
             MyReference my_second_reference(my_reference_impl);
@@ -81,7 +84,7 @@ SCENARIO("general")
             REQUIRE(my_second_reference);
         }
 
-        WHEN("a reference is created by a xvalue")
+        WHEN("a ReferenceBase is created by a xvalue")
         {
             std::shared_ptr<MyReferenceImpl> my_reference_impl(new MyReferenceImpl());
             MyReference my_second_reference(std::move(my_reference_impl));
@@ -90,10 +93,40 @@ SCENARIO("general")
         }
     }
 
-    GIVEN("a reference, its implementation methods are available")
+    GIVEN("a ConstReference, its constant implementation methods are available")
+    {
+        MyConstReference my_reference(std::shared_ptr<MyReferenceImpl>(new MyReferenceImpl()));
+        // my_reference->set_value(11); It would give an error.
+        REQUIRE(uint8_t(0) == my_reference->get_value());
+    }
+
+    GIVEN("a Reference, its implementation methods are available")
     {
         MyReference my_reference(std::shared_ptr<MyReferenceImpl>(new MyReferenceImpl()));
         my_reference->set_value(11);
         REQUIRE(uint8_t(11) == my_reference->get_value());
+
+        MyReference my_second_reference(my_reference);
+        REQUIRE(uint8_t(11) == my_second_reference->get_value());
+
+        my_reference->set_value(89);
+        REQUIRE(uint8_t(89) == my_second_reference->get_value());
+
+        THEN("we can generate a ConstReference copying this one")
+        {
+            MyConstReference my_const_reference(my_reference);
+            REQUIRE(uint8_t(89) == my_const_reference->get_value());
+
+            my_reference->set_value(11);
+            REQUIRE(uint8_t(11) == my_const_reference->get_value());
+        }
+
+        THEN("we can generate a ConstReference moving this one")
+        {
+            MyConstReference my_const_reference(std::move(my_reference));
+            REQUIRE(uint8_t(89) == my_const_reference->get_value());
+
+            REQUIRE(my_reference.is_null());
+        }
     }
 }

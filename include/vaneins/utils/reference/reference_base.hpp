@@ -22,6 +22,7 @@
 
 #include <memory>
 #include <utility>
+#include <type_traits>
 
 namespace vaneins {
 namespace utils {
@@ -32,7 +33,12 @@ class ReferenceBase
 public:
     ReferenceBase() = default;
 
-    template<typename R>
+    template<typename R,
+             typename =
+                typename std::enable_if<
+                    !std::is_same<typename std::decay<R>::type, ReferenceBase<T>>::value && 
+                    !std::is_base_of<ReferenceBase<T>, typename std::decay<R>::type>::value>
+                ::type>
     ReferenceBase(R&& impl);
 
     virtual ~ReferenceBase() = default;
@@ -51,7 +57,7 @@ protected:
 };
 
 template<typename T>
-template<typename R>
+template<typename R, typename>
 inline ReferenceBase<T>::ReferenceBase(R&& impl)
     : impl_{std::forward<R>(impl)}
 {}
