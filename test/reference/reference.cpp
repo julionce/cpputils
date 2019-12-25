@@ -32,9 +32,9 @@ private:
     uint8_t value_ = 0;
 };
 
-using MyReferenceBase = vaneins::utils::ReferenceBase<MyReferenceImpl>;
-using MyReference = vaneins::utils::Reference<MyReferenceImpl>;
-using MyConstReference = vaneins::utils::ConstReference<MyReferenceImpl>;
+using MyReferenceBase = vaneins::util::ReferenceBase<MyReferenceImpl>;
+using MyReference = vaneins::util::Reference<MyReferenceImpl>;
+using MyConstReference = vaneins::util::ConstReference<MyReferenceImpl>;
 
 SCENARIO("general")
 {

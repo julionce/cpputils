@@ -23,7 +23,7 @@
 #include <vaneins/util/reference/reference.hpp>
 
 namespace vaneins {
-namespace utils {
+namespace util {
 
 template<typename T>
 class ConstReference : public ReferenceBase<T>
@@ -55,7 +55,7 @@ const T* ConstReference<T>::operator->() const
     return this->impl_.get();
 }
 
-} // namespace utils
+} // namespace util
 } // namespace vaneins
 
 #endif // VANEINS_UTIL_REFERENCE_CONSTREFERENCE_HPP_

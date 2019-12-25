@@ -25,14 +25,14 @@
 #include <thread>
 #include <chrono>
 
-vaneins::utils::SharedMutex shared_mutex;
+vaneins::util::SharedMutex shared_mutex;
 
 class SharedTask
 {
 public:
     void run()
     {
-        vaneins::utils::SharedLock lock(shared_mutex);
+        vaneins::util::SharedLock lock(shared_mutex);
         init_time = std::chrono::steady_clock::now();
         std::this_thread::sleep_for(std::chrono::microseconds(500));
         final_time = std::chrono::steady_clock::now();
@@ -48,7 +48,7 @@ class ExclusiveTask
 public:
     void run()
     {
-        vaneins::utils::ExclusiveLock lock(shared_mutex);
+        vaneins::util::ExclusiveLock lock(shared_mutex);
         init_time = std::chrono::steady_clock::now();
         std::this_thread::sleep_for(std::chrono::microseconds(500));
         final_time = std::chrono::steady_clock::now();

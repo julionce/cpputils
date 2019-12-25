@@ -25,7 +25,7 @@
 #include <type_traits>
 
 namespace vaneins {
-namespace utils {
+namespace util {
 
 template<typename T>
 class ReferenceBase
@@ -74,7 +74,7 @@ ReferenceBase<T>::operator bool() const
     return bool(impl_);
 }
 
-} // namespace utils
+} // namespace util
 } // namespace vaneins
 
 #endif // VANEINS_UTIL_REFERENCE_REFERENCEBASE_HPP_

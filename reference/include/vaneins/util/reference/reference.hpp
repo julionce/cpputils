@@ -21,9 +21,8 @@
 #define VANEINS_UTIL_REFERENCE_REFERENCE_HPP_
 
 #include <vaneins/util/reference/reference_base.hpp>
-
 namespace vaneins {
-namespace utils {
+namespace util {
 
 template<typename T>
 class Reference : public ReferenceBase<T>
@@ -46,7 +45,7 @@ T* Reference<T>::operator->()
     return this->impl_.get();
 }
 
-} // namespace utils
+} // namespace util
 } // namespace vaneins
 
 #endif // VANEINS_UTIL_REFERENCE_REFERENCE_HPP_

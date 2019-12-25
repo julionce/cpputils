@@ -25,7 +25,7 @@
 #include <condition_variable>
 
 namespace vaneins {
-namespace utils {
+namespace util {
     
 class SharedMutex
 {
@@ -145,7 +145,7 @@ private:
 };
 
 
-} // utils
-} // vaneins
+} // namespace util
+} // namespace vaneins
 
 #endif // VANEINS_UTIL_SHAREDMUTEX_SHAREDMUTEX_HPP_
