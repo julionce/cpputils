@@ -1,33 +1,29 @@
 # Copyright 2019-present Julián Bermúdez Ortega.
 #
-# This file is part of VaneinsCpputils.
-# 
-# VaneinsCpputils is free software: you can redistribute it and/or modify
+# This file is part of vaneins::cpputils.
+#
+# vaneins::cpputils is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
-# VaneinsCpputils is distributed in the hope that it will be useful,
+#
+# vaneins::cpputils is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
-# along with VaneinsCpputils.  If not, see <https://www.gnu.org/licenses/>.
-
-include(CTest)
-include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/Catch.cmake)
-include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/ParseAndAddCatchTests.cmake)
+# along with vaneins::cpputils.  If not, see <https://www.gnu.org/licenses/>.
 
 find_package(Threads REQUIRED)
 
-set(_test_name "test-shared-mutex")
+set(_test_name "unit-test-shared-mutex")
 
-add_executable(${_test_name} ${PROJECT_SOURCE_DIR}/test/shared_mutex.cpp)
+add_executable(${_test_name} ${CMAKE_CURRENT_SOURCE_DIR}/shared_mutex.cpp)
 
 target_link_libraries(${_test_name}
     PRIVATE
-        vaneins::cpputils
+        vaneins::util::shared_mutex
         Catch2::Catch2
         Threads::Threads
     )

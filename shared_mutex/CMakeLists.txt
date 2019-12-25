@@ -15,9 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with vaneins::cpputils.  If not, see <https://www.gnu.org/licenses/>.
 
-include(CTest)
-include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/Catch.cmake)
-include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/ParseAndAddCatchTests.cmake)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-add_subdirectory(reference)
-#add_subdirectory(shared_mutex)
+project(shared_mutex VERSION "0.1.0" LANGUAGES CXX)
+
+add_library(shared_mutex INTERFACE)
+
+add_library(vaneins::util::shared_mutex ALIAS shared_mutex)
+
+target_include_directories(${PROJECT_NAME}
+    INTERFACE
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    )
