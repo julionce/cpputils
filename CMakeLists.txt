@@ -17,19 +17,33 @@
 
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-project(utils VERSION "0.1.0" LANGUAGES CXX)
+option(UTILS_BUILD_TESTS "Build tests." OFF)
 
-add_library(utils INTERFACE)
+#project(utils VERSION "0.1.0" LANGUAGES CXX)
+#
+#add_library(utils INTERFACE)
+#
+#add_library(vaneins::utils ALIAS utils)
+#
+#target_include_directories(${PROJECT_NAME}
+#    INTERFACE
+#        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+#    )
 
-add_library(vaneins::utils ALIAS utils)
-
-target_include_directories(${PROJECT_NAME}
-    INTERFACE
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    )
+###############################################################################
+# Utils.
+###############################################################################
+add_subdirectory(reference)
 
 ###############################################################################
 # Tests.
 ###############################################################################
-add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/catch2)
-add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+if(UTILS_BUILD_TESTS)
+    include(CTest)
+    include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/Catch.cmake)
+    include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/ParseAndAddCatchTests.cmake)
+
+    add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/catch2)
+
+    add_subdirectory(${PROJECT_SOURCE_DIR}/test/reference)
+endif()

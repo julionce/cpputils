@@ -20,4 +20,4 @@ include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/Catch.cmake)
 include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/ParseAndAddCatchTests.cmake)
 
 add_subdirectory(reference)
-add_subdirectory(shared_mutex)
+#add_subdirectory(shared_mutex)

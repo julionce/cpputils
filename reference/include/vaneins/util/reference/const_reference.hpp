@@ -17,31 +17,40 @@
  * along with VaneinsCpputils.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef VANEINS_UTILS_REFERENCE_REFERENCE_HPP_
-#define VANEINS_UTILS_REFERENCE_REFERENCE_HPP_
+#ifndef VANEINS_UTIL_REFERENCE_CONSTREFERENCE_HPP_
+#define VANEINS_UTIL_REFERENCE_CONSTREFERENCE_HPP_
 
-#include <vaneins/utils/reference/reference_base.hpp>
+#include <vaneins/util/reference/reference.hpp>
 
 namespace vaneins {
 namespace utils {
 
 template<typename T>
-class Reference : public ReferenceBase<T>
+class ConstReference : public ReferenceBase<T>
 {
     using ReferenceBase<T>::ReferenceBase;
 public:
-    virtual ~Reference() = default;
+    template<typename R>
+    ConstReference(R&& reference);
 
-    Reference(Reference&& other) = default;
-    Reference(const Reference& other) = default;
-    Reference& operator=(Reference&& other) = default;
-    Reference& operator=(const Reference& other) = default;
+    virtual ~ConstReference() = default;
 
-    T* operator->();
+    ConstReference(ConstReference&& other) = default;
+    ConstReference(const ConstReference& other) = default;
+    ConstReference& operator=(ConstReference&& other) = default;
+    ConstReference& operator=(const ConstReference& other) = default;
+
+    const T* operator->() const;
 };
 
 template<typename T>
-T* Reference<T>::operator->()
+template<typename R>
+inline ConstReference<T>::ConstReference(R&& reference)
+    : ReferenceBase<T>{std::forward<R>(reference)}
+{}
+
+template<typename T>
+const T* ConstReference<T>::operator->() const
 {
     return this->impl_.get();
 }
@@ -49,4 +58,4 @@ T* Reference<T>::operator->()
 } // namespace utils
 } // namespace vaneins
 
-#endif // VANEINS_UTILS_REFERENCE_REFERENCE_HPP_
+#endif // VANEINS_UTIL_REFERENCE_CONSTREFERENCE_HPP_

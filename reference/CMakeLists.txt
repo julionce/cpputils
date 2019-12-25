@@ -15,21 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with vaneins::cpputils.  If not, see <https://www.gnu.org/licenses/>.
 
-set(_test_name "unit-test-reference")
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-add_executable(${_test_name} ${CMAKE_CURRENT_SOURCE_DIR}/reference.cpp)
+project(reference VERSION "0.1.0" LANGUAGES CXX)
 
-target_link_libraries(${_test_name}
-    PRIVATE
-        vaneins::util::reference
-        Catch2::Catch2
+add_library(reference INTERFACE)
+
+add_library(vaneins::util::reference ALIAS reference)
+
+target_include_directories(${PROJECT_NAME}
+    INTERFACE
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     )
-
-set_target_properties(${_test_name} PROPERTIES
-    CXX_STANDARD
-        11
-    CMAKE_CXX_STANDARD_REQUIRED
-        YES
-    )
-
-catch_discover_tests(${_test_name})

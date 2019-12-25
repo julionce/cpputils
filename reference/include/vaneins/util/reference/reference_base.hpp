@@ -17,8 +17,8 @@
  * along with VaneinsCpputils.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef VANEINS_UTILS_REFERENCE_REFERENCEBASE_HPP_
-#define VANEINS_UTILS_REFERENCE_REFERENCEBASE_HPP_
+#ifndef VANEINS_UTIL_REFERENCE_REFERENCEBASE_HPP_
+#define VANEINS_UTIL_REFERENCE_REFERENCEBASE_HPP_
 
 #include <memory>
 #include <utility>
@@ -77,4 +77,4 @@ ReferenceBase<T>::operator bool() const
 } // namespace utils
 } // namespace vaneins
 
-#endif // VANEINS_UTILS_REFERENCE_REFERENCEBASE_HPP_
+#endif // VANEINS_UTIL_REFERENCE_REFERENCEBASE_HPP_

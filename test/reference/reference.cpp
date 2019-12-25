@@ -18,8 +18,8 @@
  */
 #define CATCH_CONFIG_MAIN
 
-#include <vaneins/utils/reference/reference.hpp>
-#include <vaneins/utils/reference/const_reference.hpp>
+#include <vaneins/util/reference/reference.hpp>
+#include <vaneins/util/reference/const_reference.hpp>
 
 #include <catch2/catch.hpp>
 
