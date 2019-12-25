@@ -1,22 +1,21 @@
 /*
  * Copyright 2019-present Julián Bermúdez Ortega.
  *
- * This file is part of VaneinsCpputils.
+ * This file is part of vaneins::utils.
  *
- * VaneinsCpputils is free software: you can redistribute it and/or modify
+ * vaneins::utils is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * VaneinsCpputils is distributed in the hope that it will be useful,
+ * vaneins::utils is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with VaneinsCpputils.  If not, see <https://www.gnu.org/licenses/>.
+ * along with vaneins::utils.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef VANEINS_UTIL_SHAREDMUTEX_SHAREDMUTEX_HPP_
 #define VANEINS_UTIL_SHAREDMUTEX_SHAREDMUTEX_HPP_
 
