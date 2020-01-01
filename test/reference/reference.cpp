@@ -25,6 +25,13 @@
 
 struct MyReferenceImpl 
 {
+public:
+    MyReferenceImpl() = default;
+
+    MyReferenceImpl(uint8_t value)
+        : value_{value}
+    {}
+
     void set_value(uint8_t value) { value_ = value; }
     uint8_t get_value() const { return value_; }
 
@@ -36,22 +43,15 @@ using MyReferenceBase = vaneins::util::ReferenceBase<MyReferenceImpl>;
 using MyReference = vaneins::util::Reference<MyReferenceImpl>;
 using MyConstReference = vaneins::util::ConstReference<MyReferenceImpl>;
 
-SCENARIO("general")
+SCENARIO("reference")
 {
-    GIVEN("an empty ReferenceBase")
+    GIVEN("a null Reference")
     {
-        std::shared_ptr<int> a;
-        std::shared_ptr<int> b(new int());
-
-        a = std::move(b);
-        REQUIRE(a);
-        REQUIRE(!b);
-
         MyReference my_reference;
         REQUIRE(my_reference.is_null());
         REQUIRE_FALSE(my_reference);
 
-        WHEN("a ReferenceBase is created by a prvalue")
+        WHEN("a Reference is created by a prvalue")
         {
             MyReference my_second_reference(std::shared_ptr<MyReferenceImpl>(new MyReferenceImpl()));
             REQUIRE_FALSE(my_second_reference.is_null());
@@ -128,5 +128,16 @@ SCENARIO("general")
 
             REQUIRE(my_reference.is_null());
         }
+    }
+
+    GIVEN("Reference and ConstReference can be create using the implementation constructor")
+    {
+        MyReference my_reference(11);
+        REQUIRE_FALSE(my_reference.is_null());
+        REQUIRE(11 == my_reference->get_value());
+
+        MyConstReference my_const_reference(11);
+        REQUIRE_FALSE(my_const_reference.is_null());
+        REQUIRE(11 == my_const_reference->get_value());
     }
 }
