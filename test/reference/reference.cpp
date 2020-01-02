@@ -20,6 +20,7 @@
 
 #include <vaneins/util/reference/reference.hpp>
 #include <vaneins/util/reference/const_reference.hpp>
+#include <vaneins/util/reference/reference_base.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -42,9 +43,7 @@ private:
     uint8_t bar_ = 0;
 };
 
-using MyReferenceBase = vaneins::util::ReferenceBase<MyReferenceImpl>;
 using MyReference = vaneins::util::Reference<MyReferenceImpl>;
-using MyConstReference = vaneins::util::ConstReference<MyReferenceImpl>;
 
 SCENARIO("reference")
 {
@@ -88,10 +87,21 @@ SCENARIO("reference")
     GIVEN("a non-null Reference")
     {
         MyReference foo(11, 89);
+
+        THEN("it can by copied")
+        {
+            MyReference bar(MyReference::copy(foo));
+            REQUIRE(11 == bar->get_foo());
+            REQUIRE(89 == bar->get_bar());
+
+            foo->set_foo(0);
+            REQUIRE(11 == bar->get_foo());
+        }
+
         THEN("it can by copied from")
         {
             MyReference bar;
-            bar.copy(foo);
+            bar.copy_from(foo);
             REQUIRE(11 == bar->get_foo());
             REQUIRE(89 == bar->get_bar());
 
@@ -112,7 +122,7 @@ SCENARIO("reference")
 
         THEN("we can generate a ConstRerence copying this one")
         {
-            MyConstReference bar(foo);
+            const MyReference bar(foo);
             REQUIRE_FALSE(bar.is_null());
             REQUIRE(11 == bar->get_foo());
             REQUIRE(89 == bar->get_bar());
@@ -123,7 +133,7 @@ SCENARIO("reference")
 
         THEN("we can generate a ConstReference moving this one")
         {
-            MyConstReference bar(std::move(foo));
+            const MyReference bar(std::move(foo));
             REQUIRE(foo.is_null());
             REQUIRE_FALSE(bar.is_null());
         }
@@ -131,8 +141,8 @@ SCENARIO("reference")
 
     GIVEN("a ConstReference, its constant implementation methods are available")
     {
-        MyConstReference foo(11, 89);
-        // my_reference->set_value(11); It would give an error.
+        const MyReference foo(11, 89);
+        // foo->set_foo(11); // It would give an error.
         REQUIRE(11 == foo->get_foo());
     }
 
