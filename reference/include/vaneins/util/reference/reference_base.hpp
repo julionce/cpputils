@@ -34,17 +34,16 @@ public:
 
     template<class... Args,
              typename =
-                typename std::enable_if<
-                    !std::is_same<typename std::decay<Args...>::type, ReferenceBase<T>>::value &&
-                    !std::is_base_of<ReferenceBase<T>, typename std::decay<Args...>::type>::value>
-                ::type>
+                typename std::enable_if<(sizeof...(Args) > 1)>::type>
     ReferenceBase(Args&&... args);
 
     template<typename R,
              typename =
                 typename std::enable_if<
-                    std::is_same<typename std::decay<R>::type, std::shared_ptr<T>>::value>::type>
-    ReferenceBase(R&& impl);
+                    !std::is_same<ReferenceBase<T>, typename std::decay<R>::type>::value &&
+                    !std::is_base_of<ReferenceBase<T>, typename std::decay<R>::type>::value>
+                ::type>
+    ReferenceBase(R&& arg);
 
     virtual ~ReferenceBase() = default;
 
@@ -69,8 +68,8 @@ inline ReferenceBase<T>::ReferenceBase(Args&&... args)
 
 template<typename T>
 template<typename R, typename>
-inline ReferenceBase<T>::ReferenceBase(R&& impl)
-    : impl_{std::forward<R>(impl)}
+inline ReferenceBase<T>::ReferenceBase(R&& arg)
+    : impl_{std::make_shared<T>(arg)}
 {}
 
 template<typename T>

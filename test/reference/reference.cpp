@@ -28,15 +28,18 @@ struct MyReferenceImpl
 public:
     MyReferenceImpl() = default;
 
-    MyReferenceImpl(uint8_t value)
-        : value_{value}
+    MyReferenceImpl(uint8_t foo, uint8_t bar)
+        : foo_{foo}
+        , bar_{bar}
     {}
 
-    void set_value(uint8_t value) { value_ = value; }
-    uint8_t get_value() const { return value_; }
+    void set_foo(uint8_t foo) { foo_ = foo; }
+    uint8_t get_foo() const { return foo_; }
+    uint8_t get_bar() const { return bar_; }
 
 private:
-    uint8_t value_ = 0;
+    uint8_t foo_ = 0;
+    uint8_t bar_ = 0;
 };
 
 using MyReferenceBase = vaneins::util::ReferenceBase<MyReferenceImpl>;
@@ -47,97 +50,82 @@ SCENARIO("reference")
 {
     GIVEN("a null Reference")
     {
-        MyReference my_reference;
-        REQUIRE(my_reference.is_null());
-        REQUIRE_FALSE(my_reference);
+        MyReference foo;
+        REQUIRE(foo.is_null());
+        REQUIRE_FALSE(foo);
 
-        WHEN("a Reference is created by a prvalue")
+        THEN("it can be assigned from a prvalue")
         {
-            MyReference my_second_reference(std::shared_ptr<MyReferenceImpl>(new MyReferenceImpl()));
-            REQUIRE_FALSE(my_second_reference.is_null());
-            REQUIRE(my_second_reference);
-
-            THEN("it can be copied")
-            {
-                my_reference = my_second_reference;
-                REQUIRE_FALSE(my_reference.is_null());
-                REQUIRE(my_reference);
-                REQUIRE_FALSE(my_second_reference.is_null());
-                REQUIRE(my_second_reference);
-            }
-
-            THEN("it can be moved")
-            {
-                my_reference = std::move(my_second_reference);
-                REQUIRE_FALSE(my_reference.is_null());
-                REQUIRE(my_reference);
-                REQUIRE(my_second_reference.is_null());
-                REQUIRE_FALSE(my_second_reference);
-            }
+            MyReference foo = MyReference(11, 89);
+            REQUIRE_FALSE(foo.is_null());
+            REQUIRE(11 == foo->get_foo());
+            REQUIRE(89 == foo->get_bar());
         }
 
-        WHEN("a ReferenceBase is created by a lvalue")
+        THEN("it can be assigned from a lvalue")
         {
-            std::shared_ptr<MyReferenceImpl> my_reference_impl(new MyReferenceImpl());
-            MyReference my_second_reference(my_reference_impl);
-            REQUIRE_FALSE(my_second_reference.is_null());
-            REQUIRE(my_second_reference);
+            MyReference bar(11, 89);
+            REQUIRE_FALSE(bar.is_null());
+            REQUIRE(11 == bar->get_foo());
+            REQUIRE(89 == bar->get_bar());
+
+            foo = bar;
+            REQUIRE_FALSE(bar.is_null());
+            REQUIRE_FALSE(foo.is_null());
+            REQUIRE(11 == foo->get_foo());
+            REQUIRE(89 == foo->get_bar());
         }
 
-        WHEN("a ReferenceBase is created by a xvalue")
+        THEN("it can be assigned from an xvalue")
         {
-            std::shared_ptr<MyReferenceImpl> my_reference_impl(new MyReferenceImpl());
-            MyReference my_second_reference(std::move(my_reference_impl));
-            REQUIRE_FALSE(my_second_reference.is_null());
-            REQUIRE(my_second_reference);
+            MyReference bar(11, 89);
+
+            foo = std::move(bar);
+            REQUIRE(bar.is_null());
+        }
+    }
+
+    GIVEN("a non-null Reference")
+    {
+        MyReference foo(11, 89);
+        THEN("it can by copied from")
+        {
+            MyReference bar(foo);
+            REQUIRE_FALSE(foo.is_null());
+            REQUIRE(11 == bar->get_foo());
+            REQUIRE(89 == bar->get_bar());
+        }
+
+        THEN("we can generate a ConstRerence copying this one")
+        {
+            MyConstReference bar(foo);
+            REQUIRE_FALSE(bar.is_null());
+            REQUIRE(11 == bar->get_foo());
+            REQUIRE(89 == bar->get_bar());
+
+            foo->set_foo(12);
+            REQUIRE(12 == bar->get_foo());
+        }
+
+        THEN("we can generate a ConstReference moving this one")
+        {
+            MyConstReference bar(std::move(foo));
+            REQUIRE(foo.is_null());
+            REQUIRE_FALSE(bar.is_null());
         }
     }
 
     GIVEN("a ConstReference, its constant implementation methods are available")
     {
-        MyConstReference my_reference(std::shared_ptr<MyReferenceImpl>(new MyReferenceImpl()));
+        MyConstReference foo(11, 89);
         // my_reference->set_value(11); It would give an error.
-        REQUIRE(uint8_t(0) == my_reference->get_value());
+        REQUIRE(11 == foo->get_foo());
     }
 
     GIVEN("a Reference, its implementation methods are available")
     {
-        MyReference my_reference(std::shared_ptr<MyReferenceImpl>(new MyReferenceImpl()));
-        my_reference->set_value(11);
-        REQUIRE(uint8_t(11) == my_reference->get_value());
-
-        MyReference my_second_reference(my_reference);
-        REQUIRE(uint8_t(11) == my_second_reference->get_value());
-
-        my_reference->set_value(89);
-        REQUIRE(uint8_t(89) == my_second_reference->get_value());
-
-        THEN("we can generate a ConstReference copying this one")
-        {
-            MyConstReference my_const_reference(my_reference);
-            REQUIRE(uint8_t(89) == my_const_reference->get_value());
-
-            my_reference->set_value(11);
-            REQUIRE(uint8_t(11) == my_const_reference->get_value());
-        }
-
-        THEN("we can generate a ConstReference moving this one")
-        {
-            MyConstReference my_const_reference(std::move(my_reference));
-            REQUIRE(uint8_t(89) == my_const_reference->get_value());
-
-            REQUIRE(my_reference.is_null());
-        }
-    }
-
-    GIVEN("Reference and ConstReference can be create using the implementation constructor")
-    {
-        MyReference my_reference(11);
-        REQUIRE_FALSE(my_reference.is_null());
-        REQUIRE(11 == my_reference->get_value());
-
-        MyConstReference my_const_reference(11);
-        REQUIRE_FALSE(my_const_reference.is_null());
-        REQUIRE(11 == my_const_reference->get_value());
+        MyReference foo(0, 0);
+        foo->set_foo(11);
+        REQUIRE(11 == foo->get_foo());
     }
 }
