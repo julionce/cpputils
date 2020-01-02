@@ -90,10 +90,24 @@ SCENARIO("reference")
         MyReference foo(11, 89);
         THEN("it can by copied from")
         {
+            MyReference bar;
+            bar.copy(foo);
+            REQUIRE(11 == bar->get_foo());
+            REQUIRE(89 == bar->get_bar());
+
+            foo->set_foo(0);
+            REQUIRE(11 == bar->get_foo());
+        }
+
+        THEN("we can generate another from this one")
+        {
             MyReference bar(foo);
             REQUIRE_FALSE(foo.is_null());
             REQUIRE(11 == bar->get_foo());
             REQUIRE(89 == bar->get_bar());
+
+            foo->set_foo(0);
+            REQUIRE(0 == bar->get_foo());
         }
 
         THEN("we can generate a ConstRerence copying this one")

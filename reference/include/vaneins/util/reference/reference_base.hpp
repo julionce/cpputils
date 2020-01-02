@@ -52,6 +52,9 @@ public:
     ReferenceBase& operator=(ReferenceBase&& other) = default;
     ReferenceBase& operator=(const ReferenceBase& other) = default;
 
+    void copy(
+        const ReferenceBase& other);
+
     bool is_null() const;
     
     operator bool() const;
@@ -71,6 +74,20 @@ template<typename R, typename>
 inline ReferenceBase<T>::ReferenceBase(R&& arg)
     : impl_{std::make_shared<T>(arg)}
 {}
+
+template<typename T>
+inline void ReferenceBase<T>::copy(
+        const ReferenceBase& other)
+{
+    if (other.impl_)
+    {
+        impl_ = std::shared_ptr<T>(new T(*other.impl_.get()));
+    }
+    else
+    {
+        impl_.reset();
+    }
+}
 
 template<typename T>
 inline bool ReferenceBase<T>::is_null() const
