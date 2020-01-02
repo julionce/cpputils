@@ -30,11 +30,9 @@ template<typename T>
 class Reference
 {
 public:
-    Reference() = default;
-
     template<class... Args,
              typename =
-                typename std::enable_if<(sizeof...(Args) > 1)>::type>
+                typename std::enable_if<(sizeof...(Args) != 1)>::type>
     Reference(Args&&... args);
 
     template<typename R,

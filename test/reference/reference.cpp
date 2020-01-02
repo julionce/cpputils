@@ -19,8 +19,6 @@
 #define CATCH_CONFIG_MAIN
 
 #include <vaneins/util/reference/reference.hpp>
-#include <vaneins/util/reference/const_reference.hpp>
-#include <vaneins/util/reference/reference_base.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -45,34 +43,33 @@ private:
 
 using MyReference = vaneins::util::Reference<MyReferenceImpl>;
 
-SCENARIO("reference")
+SCENARIO("Reference")
 {
-    GIVEN("a null Reference")
+    GIVEN("a Reference")
     {
-        MyReference foo;
-        REQUIRE(foo.is_null());
-        REQUIRE_FALSE(foo);
+        MyReference foo(11, 89);
+        REQUIRE_FALSE(foo.is_null());
 
         THEN("it can be assigned from a prvalue")
         {
-            MyReference foo = MyReference(11, 89);
+            MyReference foo = MyReference();
             REQUIRE_FALSE(foo.is_null());
-            REQUIRE(11 == foo->get_foo());
-            REQUIRE(89 == foo->get_bar());
+            REQUIRE(0 == foo->get_foo());
+            REQUIRE(0 == foo->get_bar());
         }
 
         THEN("it can be assigned from a lvalue")
         {
-            MyReference bar(11, 89);
+            MyReference bar(1, 1);
             REQUIRE_FALSE(bar.is_null());
-            REQUIRE(11 == bar->get_foo());
-            REQUIRE(89 == bar->get_bar());
+            REQUIRE(1 == bar->get_foo());
+            REQUIRE(1 == bar->get_bar());
 
             foo = bar;
             REQUIRE_FALSE(bar.is_null());
             REQUIRE_FALSE(foo.is_null());
-            REQUIRE(11 == foo->get_foo());
-            REQUIRE(89 == foo->get_bar());
+            REQUIRE(1 == foo->get_foo());
+            REQUIRE(1 == foo->get_bar());
         }
 
         THEN("it can be assigned from an xvalue")
@@ -82,11 +79,6 @@ SCENARIO("reference")
             foo = std::move(bar);
             REQUIRE(bar.is_null());
         }
-    }
-
-    GIVEN("a non-null Reference")
-    {
-        MyReference foo(11, 89);
 
         THEN("it can by copied")
         {
@@ -120,7 +112,7 @@ SCENARIO("reference")
             REQUIRE(0 == bar->get_foo());
         }
 
-        THEN("we can generate a ConstRerence copying this one")
+        THEN("we can generate a constant Rerence copying this one")
         {
             const MyReference bar(foo);
             REQUIRE_FALSE(bar.is_null());
@@ -131,7 +123,7 @@ SCENARIO("reference")
             REQUIRE(12 == bar->get_foo());
         }
 
-        THEN("we can generate a ConstReference moving this one")
+        THEN("we can generate a constant Reference moving this one")
         {
             const MyReference bar(std::move(foo));
             REQUIRE(foo.is_null());
@@ -139,7 +131,7 @@ SCENARIO("reference")
         }
     }
 
-    GIVEN("a ConstReference, its constant implementation methods are available")
+    GIVEN("a constant Reference, its constant implementation methods are available")
     {
         const MyReference foo(11, 89);
         // foo->set_foo(11); // It would give an error.
