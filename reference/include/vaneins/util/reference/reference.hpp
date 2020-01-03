@@ -50,18 +50,24 @@ public:
     Reference& operator=(Reference&& other) = default;
     Reference& operator=(const Reference& other) = default;
 
-    T* operator->();
-    const T* operator->() const;
-
-    static Reference<T> copy(
-        const Reference<T>& other);
-
     void copy_from(
         const Reference<T>& other);
 
     bool is_null() const;
     
     operator bool() const;
+
+    T* operator->();
+
+    const T* operator->() const;
+
+    static Reference<T> null();
+
+    static Reference<T> copy(
+        const Reference<T>& other);
+
+private:
+    Reference(void*);
 
 protected:
     std::shared_ptr<T> impl_;
@@ -80,25 +86,9 @@ inline Reference<T>::Reference(R&& arg)
 {}
 
 template<typename T>
-T* Reference<T>::operator->()
-{
-    return this->impl_.get();
-}
-
-template<typename T>
-const T* Reference<T>::operator->() const
-{
-    return this->impl_.get();
-}
-
-template<typename T>
-inline Reference<T> Reference<T>::copy(
-        const Reference<T>& other)
-{
-    Reference<T> rv;
-    rv.copy_from(other);
-    return rv;
-}
+inline Reference<T>::Reference(void*)
+    : impl_{nullptr}
+{}
 
 template<typename T>
 inline void Reference<T>::copy_from(
@@ -124,6 +114,33 @@ template<typename T>
 Reference<T>::operator bool() const
 {
     return bool(impl_);
+}
+
+template<typename T>
+T* Reference<T>::operator->()
+{
+    return this->impl_.get();
+}
+
+template<typename T>
+const T* Reference<T>::operator->() const
+{
+    return this->impl_.get();
+}
+
+template<typename T>
+inline Reference<T> Reference<T>::null()
+{
+    return Reference<T>(static_cast<void*>(nullptr));
+}
+
+template<typename T>
+inline Reference<T> Reference<T>::copy(
+        const Reference<T>& other)
+{
+    Reference<T> rv;
+    rv.copy_from(other);
+    return rv;
 }
 
 } // namespace util

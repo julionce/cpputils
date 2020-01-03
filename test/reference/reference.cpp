@@ -45,6 +45,16 @@ using MyReference = vaneins::util::Reference<MyReferenceImpl>;
 
 SCENARIO("Reference")
 {
+    GIVEN("a null Reference")
+    {
+        MyReference foo = MyReference::null();
+
+        THEN("is_null shall return true")
+        {
+            REQUIRE(foo.is_null());
+        }
+    }
+
     GIVEN("a Reference")
     {
         MyReference foo(11, 89);
