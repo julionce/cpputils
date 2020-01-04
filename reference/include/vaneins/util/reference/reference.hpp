@@ -30,24 +30,16 @@ template<typename T>
 class Reference
 {
 public:
-    template<class... Args,
-             typename =
-                typename std::enable_if<(sizeof...(Args) != 1)>::type>
+    template<class... Args>
     Reference(Args&&... args);
-
-    template<typename R,
-             typename =
-                typename std::enable_if<
-                    !std::is_same<Reference<T>, typename std::decay<R>::type>::value &&
-                    !std::is_base_of<Reference<T>, typename std::decay<R>::type>::value>
-                ::type>
-    Reference(R&& arg);
 
     virtual ~Reference() = default;
 
     Reference(Reference&& other) = default;
+    Reference(Reference& other) = default;
     Reference(const Reference& other) = default;
     Reference& operator=(Reference&& other) = default;
+    Reference& operator=(Reference& other) = default;
     Reference& operator=(const Reference& other) = default;
 
     void copy_from(
@@ -74,15 +66,9 @@ protected:
 };
 
 template<typename T>
-template<class... Args, typename>
+template<class... Args>
 inline Reference<T>::Reference(Args&&... args)
     : impl_{std::make_shared<T>(args...)}
-{}
-
-template<typename T>
-template<typename R, typename>
-inline Reference<T>::Reference(R&& arg)
-    : impl_{std::make_shared<T>(arg)}
 {}
 
 template<typename T>
