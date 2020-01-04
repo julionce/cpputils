@@ -31,7 +31,7 @@ class Reference
 {
 public:
     template<class... Args>
-    Reference(Args&&... args);
+    explicit Reference(Args&&... args);
 
     virtual ~Reference() = default;
 
@@ -52,6 +52,9 @@ public:
     T* operator->();
 
     const T* operator->() const;
+
+    template<typename R>
+    operator R() const;
 
     static Reference<T> null();
 
@@ -112,6 +115,13 @@ template<typename T>
 const T* Reference<T>::operator->() const
 {
     return this->impl_.get();
+}
+
+template<typename T>
+template<typename R>
+Reference<T>::operator R() const
+{
+    return impl_->operator R();
 }
 
 template<typename T>
