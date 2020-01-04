@@ -134,7 +134,7 @@ template<typename T>
 inline Reference<T> Reference<T>::copy(
         const Reference<T>& other)
 {
-    Reference<T> rv;
+    Reference<T> rv = Reference<T>::null();
     rv.copy_from(other);
     return rv;
 }
