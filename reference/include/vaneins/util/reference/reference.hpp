@@ -57,6 +57,9 @@ public:
     friend bool operator==(const Reference<R>& lhs, const Reference<R>& rhs);
 
     template<typename R>
+    friend bool operator!=(const Reference<R>& lhs, const Reference<R>& rhs);
+
+    template<typename R>
     operator R() const;
 
     static Reference<T> null();
@@ -147,6 +150,12 @@ inline bool operator==(const Reference<R>& lhs, const Reference<R>& rhs)
         }
     }
     return rv;
+}
+
+template<typename R>
+inline bool operator!=(const Reference<R>& lhs, const Reference<R>& rhs)
+{
+    return !(lhs == rhs);
 }
 
 template<typename T>

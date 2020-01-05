@@ -173,6 +173,7 @@ SCENARIO("Reference operator==")
             THEN("operator== shall return true")
             {
                 REQUIRE(foo == bar);
+                REQUIRE_FALSE(foo != bar);
             }
         }
 
@@ -183,6 +184,7 @@ SCENARIO("Reference operator==")
                 MyReference foo(11, 89);
                 MyReference bar(11, 89);
                 REQUIRE(foo == bar);
+                REQUIRE_FALSE(foo != bar);
             }
 
             THEN("if they are different the operator== shall return false")
@@ -190,6 +192,7 @@ SCENARIO("Reference operator==")
                 MyReference foo(11, 89);
                 MyReference bar(11, 79);
                 REQUIRE_FALSE(foo == bar);
+                REQUIRE(foo != bar);
             }
         }
     }
