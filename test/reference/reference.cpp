@@ -32,6 +32,11 @@ public:
         , bar_{bar}
     {}
 
+    friend bool operator==(const MyReferenceImpl& lhs, const MyReferenceImpl& rhs)
+    {
+        return (lhs.foo_ == rhs.foo_) && (lhs.bar_ == rhs.bar_);
+    }
+
     void set_foo(uint8_t foo) { foo_ = foo; }
     uint8_t get_foo() const { return foo_; }
     uint8_t get_bar() const { return bar_; }
@@ -153,5 +158,39 @@ SCENARIO("Reference")
         MyReference foo(0, 0);
         foo->set_foo(11);
         REQUIRE(11 == foo->get_foo());
+    }
+}
+
+SCENARIO("Reference operator==")
+{
+    GIVEN("two References")
+    {
+        WHEN("one is a copy of the other")
+        {
+            MyReference foo(11, 89);
+            MyReference bar(foo);
+
+            THEN("operator== shall return true")
+            {
+                REQUIRE(foo == bar);
+            }
+        }
+
+        WHEN("they are contructed independenly")
+        {
+            THEN("if they are equal the operator== shall return true")
+            {
+                MyReference foo(11, 89);
+                MyReference bar(11, 89);
+                REQUIRE(foo == bar);
+            }
+
+            THEN("if they are different the operator== shall return false")
+            {
+                MyReference foo(11, 89);
+                MyReference bar(11, 79);
+                REQUIRE_FALSE(foo == bar);
+            }
+        }
     }
 }

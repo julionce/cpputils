@@ -54,6 +54,9 @@ public:
     const T* operator->() const;
 
     template<typename R>
+    friend bool operator==(const Reference<R>& lhs, const Reference<R>& rhs);
+
+    template<typename R>
     operator R() const;
 
     static Reference<T> null();
@@ -100,28 +103,50 @@ inline bool Reference<T>::is_null() const
 }
 
 template<typename T>
-Reference<T>::operator bool() const
+inline Reference<T>::operator bool() const
 {
     return bool(impl_);
 }
 
 template<typename T>
-T* Reference<T>::operator->()
+inline T* Reference<T>::operator->()
 {
     return this->impl_.get();
 }
 
 template<typename T>
-const T* Reference<T>::operator->() const
+inline const T* Reference<T>::operator->() const
 {
     return this->impl_.get();
 }
 
 template<typename T>
 template<typename R>
-Reference<T>::operator R() const
+inline Reference<T>::operator R() const
 {
     return impl_->operator R();
+}
+
+template<typename R>
+inline bool operator==(const Reference<R>& lhs, const Reference<R>& rhs)
+{
+    bool rv = false;
+    if (lhs.is_null() || rhs.is_null())
+    {
+        rv = lhs.is_null() && rhs.is_null();
+    }
+    else
+    {
+        if (lhs.impl_.get() == rhs.impl_.get())
+        {
+            rv = true;
+        }
+        else
+        {
+            rv = (*lhs.impl_ == *rhs.impl_);
+        }
+    }
+    return rv;
 }
 
 template<typename T>
