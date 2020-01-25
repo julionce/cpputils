@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with vaneins::utils.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef VANEINS_UTIL_REFERENCE_Reference_HPP_
-#define VANEINS_UTIL_REFERENCE_Reference_HPP_
+#ifndef VANEINS_UTIL_REFERENCE_REFERENCE_HPP_
+#define VANEINS_UTIL_REFERENCE_REFERENCE_HPP_
 
 #include <memory>
 #include <utility>
@@ -176,4 +176,4 @@ inline Reference<T> Reference<T>::copy(
 } // namespace util
 } // namespace vaneins
 
-#endif // VANEINS_UTIL_REFERENCE_Reference_HPP_
+#endif // VANEINS_UTIL_REFERENCE_REFERENCE_HPP_

@@ -24,6 +24,7 @@ option(UTILS_BUILD_TESTS "Build tests." OFF)
 ###############################################################################
 add_subdirectory(reference)
 add_subdirectory(shared_mutex)
+add_subdirectory(tree)
 
 ###############################################################################
 # Tests.
@@ -37,4 +38,5 @@ if(UTILS_BUILD_TESTS)
 
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/reference)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/shared_mutex)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/test/tree)
 endif()
