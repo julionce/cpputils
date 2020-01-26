@@ -74,8 +74,8 @@ SCENARIO("Node<Foo>")
     GIVEN("a root node")
     {
         Node<Foo> root(0, 0.1);
-        REQUIRE(0 == (*root).get_a());
-        REQUIRE(0.1 == (*root).get_b());
+        REQUIRE(0 == root->get_a());
+        REQUIRE(0.1 == root->get_b());
 
         THEN("its parent shall be itself")
         {
@@ -85,11 +85,11 @@ SCENARIO("Node<Foo>")
         WHEN("a child and a grandchild are added")
         {
             Node<Foo>& child = root.add_child(2, 0.3);
-            REQUIRE(2 == (*child).get_a());
-            REQUIRE(0.3 == (*child).get_b());
+            REQUIRE(2 == child->get_a());
+            REQUIRE(0.3 == child->get_b());
             Node<Foo>& grandchild = child.add_child(4, 0.5);
-            REQUIRE(4 == (*grandchild).get_a());
-            REQUIRE(0.5 == (*grandchild).get_b());
+            REQUIRE(4 == grandchild->get_a());
+            REQUIRE(0.5 == grandchild->get_b());
 
             THEN("the family hierarchy shall be satisfied")
             {

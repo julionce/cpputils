@@ -41,6 +41,7 @@ public:
     Node& add_child(Args&&... args);
 
     const T& operator*() const;
+    const T* operator->() const;
 
 private:
     const T data_;
@@ -88,6 +89,12 @@ template<typename T>
 inline const T& Node<T>::operator*() const
 {
     return data_;
+}
+
+template<typename T>
+inline const T* Node<T>::operator->() const
+{
+    return &data_;
 }
 
 } // namespace util
