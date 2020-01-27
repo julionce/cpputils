@@ -25,75 +25,64 @@ namespace vaneins {
 namespace util {
 
 template<typename T>
-class Node
-{
-    template<class... Args>
-    Node(Args&&... args);
-
-public:
-    bool is_root() const;
-
-    const Node& get_parent() const;
-    Node& get_parent();
-
-    template<class... Args>
-    Node& add_child(Args&&... args);
-
-    const T& operator->() const
-
-private:
-    const T data_;
-    const Node* parent_;
-    std::vector<Node> children_;
-};
-
-template<typename T>
-template<class... Args>
-Node<T>::Node(Args&&... args)
-    : T{std::forward<Args>(args)...}
-    , parent_{nullptr}
-    , children_
-{}
-
-template<typename T>
-bool Node<T>::is_root() const
-{
-    return (nullptr == parent_);
-}
-
-template<typename T>
-const Node<T>& Node<T>::get_parent() const
-{
-    return is_root() ? *this : *parent_;
-}
-
-template<typename T>
-Node<T>& Node<T>::get_parent()
-{
-    return is_root() ? *this : *parent_;
-}
-
-template<typename T>
-class Tree 
+class Tree
 {
 public:
-    template<typename R>
-    Tree(R&& arg);
+    class Node
+    {
+        friend Tree;
 
-    const Node<T>& get_root() const { return root_; }
-    Node<T>& get_root() { return root_; }
+        template<class... Args>
+        explicit Node(Node* parent, Args&&... args)
+            : data_{std::forward<Args>(args)...}
+            , parent_{parent}
+            , children_{}
+        {}
+
+    public:
+        const Node& get_parent() const { return (nullptr == parent_) ? *this : *parent_; }
+        Node& get_parent() { return (nullptr == parent_) ? *this : *parent_; }
+
+        template<class... Args>
+        Node& add_child(Args&&... args)
+        {
+            children_.emplace_back(Node(this, std::forward<Args>(args)...));
+            return children_.back();
+        }
+
+        const T& operator*() const { return data_; }
+        const T* operator->() const { return &data_; }
+
+    private:
+        const T data_;
+        Node* const parent_;
+        std::vector<Node> children_;
+    };
+
+    template<class... Args>
+    explicit Tree(Args&&... args)
+        : root_{nullptr, std::forward<Args>(args)...}
+    {}
+
+    Node& get_root()
+    {
+        return root_;
+    }
+
+//    static const Node& get_node_parent(const Node& node) { return (nullptr == node.parent_) ? node : *node.parent_; }
+//    Node& get_parent(const Node& node) { return (nullptr == node.parent_) ? node : *node.parent_; }
+//
+//    template<class... Args>
+//    static Node& add_node_child(Node& parent, Args&&... args)
+//    {
+//        parent.children_.emplace_back(Node(&parent, std::forward<Args>(args)...));
+//    }
 
 private:
-    Node<T> root_;
+    Node root_;
 };
 
-template<typename T>
-template<typename R>
-inline Tree<T>::Tree(R&& arg)
-    : root_{}
-{}
-
-} // namespace util
-} // namespace vaneins
+}
+}
 
 #endif // VANEINS_UTIL_TREE_TREE_HPP_
