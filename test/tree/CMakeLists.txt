@@ -18,7 +18,6 @@
 set(_test_name "unit-test-tree")
 
 add_executable(${_test_name}
-#    ${CMAKE_CURRENT_SOURCE_DIR}/node.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tree.cpp
     )
 
