@@ -19,7 +19,8 @@
 #ifndef VANEINS_UTIL_TREE_TREE_HPP_
 #define VANEINS_UTIL_TREE_TREE_HPP_
 
-#include <vector>
+#include <cstdint>
+#include <list>
 
 namespace vaneins {
 namespace util {
@@ -36,6 +37,7 @@ public:
         explicit Node(Node* parent, Args&&... args)
             : data_{std::forward<Args>(args)...}
             , parent_{parent}
+            , younger_sibling_{nullptr}
             , children_{}
         {}
 
@@ -46,7 +48,12 @@ public:
         template<class... Args>
         Node& add_child(Args&&... args)
         {
+            Node* older_sibling = children_.empty() ? nullptr : &children_.back();
             children_.emplace_back(Node(this, std::forward<Args>(args)...));
+            if (nullptr != older_sibling)
+            {
+                older_sibling->younger_sibling_ = &children_.back();
+            }
             return children_.back();
         }
 
@@ -56,12 +63,61 @@ public:
     private:
         const T data_;
         Node* const parent_;
-        std::vector<Node> children_;
+        Node* younger_sibling_;
+        std::list<Node> children_;
+    };
+
+    class PreOrderIterator
+    {
+    public:
+        using iterator_category = std::bidirectional_iterator_tag;
+        using value_type = T;
+        using difference_type = int64_t;
+        using pointer = T*;
+        using reference = T&;
+
+        explicit PreOrderIterator(const Node* node = nullptr)
+            : node_{node}
+        {}
+
+        PreOrderIterator& operator++()
+        {
+            if (nullptr != node_)
+            {
+                node_ = (node_->children_.empty())
+                    ? get_next_preorder(*node_)
+                    : &node_->children_.front();
+            }
+            return *this;
+        }
+
+        PreOrderIterator& operator--()
+        {
+            PreOrderIterator rv;
+            return rv;
+        }
+
+        bool operator==(const PreOrderIterator& other) const { return (node_ == other.node_); }
+        bool operator!=(const PreOrderIterator& other) const { return !(*this == other); }
+        const T& operator*() const { return node_->data_; }
+
+    private:
+        static Node* get_next_preorder(const Node& node)
+        {
+            return (nullptr != node.younger_sibling_)
+                ? node.younger_sibling_
+                : (nullptr != node.parent_) ? get_next_preorder(*node.parent_) : nullptr;
+        }
+
+    private:
+        const Node* node_;
     };
 
     template<class... Args>
     explicit Tree(Args&&... args)
         : root_{nullptr, std::forward<Args>(args)...}
+        , preorder_it_begin_{&root_}
+        , preorder_it_end_{}
     {}
 
     Node& get_root()
@@ -69,17 +125,13 @@ public:
         return root_;
     }
 
-//    static const Node& get_node_parent(const Node& node) { return (nullptr == node.parent_) ? node : *node.parent_; }
-//    Node& get_parent(const Node& node) { return (nullptr == node.parent_) ? node : *node.parent_; }
-//
-//    template<class... Args>
-//    static Node& add_node_child(Node& parent, Args&&... args)
-//    {
-//        parent.children_.emplace_back(Node(&parent, std::forward<Args>(args)...));
-//    }
+    const PreOrderIterator& preorder_begin() { return preorder_it_begin_; }
+    const PreOrderIterator& preorder_end() { return preorder_it_end_; }
 
 private:
     Node root_;
+    PreOrderIterator preorder_it_begin_;
+    PreOrderIterator preorder_it_end_;
 };
 
 }

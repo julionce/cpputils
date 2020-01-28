@@ -78,3 +78,25 @@ SCENARIO("Tree<Foo>::Node")
         REQUIRE(11.89 == tree.get_root()->get_b());
     }
 }
+
+SCENARIO("Pre-order iteration")
+{
+    GIVEN("a tree")
+    {
+        Tree<char> tree('A');
+        Tree<char>::Node& root = tree.get_root();
+        Tree<char>::Node& b_node = root.add_child('B');
+        Tree<char>::Node& c_node = root.add_child('C');
+        Tree<char>::Node& d_node = root.add_child('D');
+        Tree<char>::Node& e_node = b_node.add_child('E');
+        Tree<char>::Node& f_node = d_node.add_child('F');
+        Tree<char>::Node& g_node = d_node.add_child('G');
+        Tree<char>::Node& h_node = d_node.add_child('H');
+        Tree<char>::Node& j_node = d_node.add_child('J');
+
+        for(Tree<char>::PreOrderIterator it = tree.preorder_begin(); it != tree.preorder_end(); ++it)
+        {
+            std::cout << *it << std::endl;
+        }
+    }
+}
