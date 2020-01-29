@@ -34,41 +34,36 @@ public:
         friend Tree;
 
         template<class... Args>
-        explicit Node(Node* parent, Args&&... args)
+        explicit Node(
+                Node* parent,
+                Node* preorder_prev,
+                Node* preorder_next,
+                Args&&... args)
             : data_{std::forward<Args>(args)...}
             , parent_{parent}
-            , younger_sibling_{nullptr}
-            , children_{}
+            , youngest_child_{nullptr}
+            , preorder_prev_{preorder_prev}
+            , preorder_next_{preorder_next}
         {}
 
     public:
-        const Node& get_parent() const { return (nullptr == parent_) ? *this : *parent_; }
-        Node& get_parent() { return (nullptr == parent_) ? *this : *parent_; }
-
-        template<class... Args>
-        Node& add_child(Args&&... args)
-        {
-            Node* older_sibling = children_.empty() ? nullptr : &children_.back();
-            children_.emplace_back(Node(this, std::forward<Args>(args)...));
-            if (nullptr != older_sibling)
-            {
-                older_sibling->younger_sibling_ = &children_.back();
-            }
-            return children_.back();
-        }
-
         const T& operator*() const { return data_; }
         const T* operator->() const { return &data_; }
+
+        Node(const Node&) = delete;
+        Node& operator==(const Node&) = delete;
 
     private:
         const T data_;
         Node* const parent_;
-        Node* younger_sibling_;
-        std::list<Node> children_;
+        Node* youngest_child_;
+        Node* preorder_prev_;
+        Node* preorder_next_;
     };
 
     class PreOrderIterator
     {
+        friend Tree;
     public:
         using iterator_category = std::bidirectional_iterator_tag;
         using value_type = T;
@@ -76,25 +71,26 @@ public:
         using pointer = T*;
         using reference = T&;
 
-        explicit PreOrderIterator(const Node* node = nullptr)
+        explicit PreOrderIterator(Node* node = nullptr)
             : node_{node}
         {}
 
         PreOrderIterator& operator++()
         {
-            if (nullptr != node_)
+            if (nullptr != node_->preorder_next_)
             {
-                node_ = (node_->children_.empty())
-                    ? get_next_preorder(*node_)
-                    : &node_->children_.front();
+                node_ = node_->preorder_next_;
             }
             return *this;
         }
 
         PreOrderIterator& operator--()
         {
-            PreOrderIterator rv;
-            return rv;
+            if (nullptr != node_->preorder_prev_)
+            {
+                node_ = node_->preorder_prev_;
+            }
+            return *this;
         }
 
         bool operator==(const PreOrderIterator& other) const { return (node_ == other.node_); }
@@ -102,39 +98,54 @@ public:
         const T& operator*() const { return node_->data_; }
 
     private:
-        static Node* get_next_preorder(const Node& node)
-        {
-            return (nullptr != node.younger_sibling_)
-                ? node.younger_sibling_
-                : (nullptr != node.parent_) ? get_next_preorder(*node.parent_) : nullptr;
-        }
-
-    private:
-        const Node* node_;
+        Node* node_;
     };
 
     template<class... Args>
     explicit Tree(Args&&... args)
-        : root_{nullptr, std::forward<Args>(args)...}
-        , preorder_it_begin_{&root_}
-        , preorder_it_end_{}
+        : root_{nullptr, nullptr, &last_, std::forward<Args>(args)...}
+        , last_{nullptr, &root_, nullptr, std::forward<Args>(args)...}
     {}
+
+    ~Tree()
+    {
+        // TODO
+    }
 
     Node& get_root()
     {
         return root_;
     }
 
-    const PreOrderIterator& preorder_begin() { return preorder_it_begin_; }
-    const PreOrderIterator& preorder_end() { return preorder_it_end_; }
+    Node& get_parent(Node& node)
+    {
+        return (nullptr != node.parent_) ? *node.parent_ : node;
+    }
+
+    template<class... Args>
+    Node& add_child(Node& node, Args&&... args)
+    {
+        Node* prev_node = &node;
+        while (nullptr != prev_node->youngest_child_)
+        {
+            prev_node = prev_node->youngest_child_;
+        }
+        Node* next_node = prev_node->preorder_next_;
+        node.youngest_child_ = new Node(&node, prev_node, next_node, std::forward<Args>(args)...);
+        prev_node->preorder_next_ = node.youngest_child_;
+        next_node->preorder_prev_ = node.youngest_child_;
+        return *node.youngest_child_;
+    }
+
+    PreOrderIterator begin_preorder() { return PreOrderIterator(&root_); }
+    PreOrderIterator end_preorder() { return PreOrderIterator(&last_); }
 
 private:
     Node root_;
-    PreOrderIterator preorder_it_begin_;
-    PreOrderIterator preorder_it_end_;
+    Node last_;
 };
 
-}
-}
+} // namespace util
+} // namespace vaneins
 
 #endif // VANEINS_UTIL_TREE_TREE_HPP_

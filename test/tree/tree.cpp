@@ -45,25 +45,26 @@ SCENARIO("Tree<int>::Node")
     GIVEN("a tree")
     {
         Tree<int> tree(11);
-        REQUIRE(11 == *tree.get_root());
+        Tree<int>::Node& root = tree.get_root();
+        REQUIRE(11 == *root);
 
         THEN("its parent shall be itself")
         {
-            REQUIRE(&tree.get_root() == &tree.get_root().get_parent());
+            REQUIRE(&root == &tree.get_parent(root));
         }
 
         WHEN("a child and a grandchild are added")
         {
-            Tree<int>::Node& child = tree.get_root().add_child(1);
-            Tree<int>::Node& grandchild = child.add_child(2);
+            Tree<int>::Node& child = tree.add_child(root, 1);
+            Tree<int>::Node& grandchild = tree.add_child(child, 2);
             REQUIRE(1 == *child);
             REQUIRE(2 == *grandchild);
 
             THEN("the family hierarchy shall be satisfied")
             {
-                REQUIRE(&child.get_parent() == &tree.get_root());
-                REQUIRE(&grandchild.get_parent() == &child);
-                REQUIRE(&grandchild.get_parent().get_parent() == &tree.get_root());
+                REQUIRE(&tree.get_parent(child) == &tree.get_root());
+                REQUIRE(&tree.get_parent(grandchild) == &child);
+                REQUIRE(&tree.get_parent(tree.get_parent(grandchild)) == &root);
             }
         }
     }
@@ -77,6 +78,8 @@ SCENARIO("Tree<Foo>::Node")
         REQUIRE(11 == tree.get_root()->get_a());
         REQUIRE(11.89 == tree.get_root()->get_b());
     }
+    std::cout << sizeof(Tree<int>::Node) << std::endl;
+    std::cout << sizeof(std::list<int>::iterator) << std::endl;
 }
 
 SCENARIO("Pre-order iteration")
@@ -85,16 +88,16 @@ SCENARIO("Pre-order iteration")
     {
         Tree<char> tree('A');
         Tree<char>::Node& root = tree.get_root();
-        Tree<char>::Node& b_node = root.add_child('B');
-        Tree<char>::Node& c_node = root.add_child('C');
-        Tree<char>::Node& d_node = root.add_child('D');
-        Tree<char>::Node& e_node = b_node.add_child('E');
-        Tree<char>::Node& f_node = d_node.add_child('F');
-        Tree<char>::Node& g_node = d_node.add_child('G');
-        Tree<char>::Node& h_node = d_node.add_child('H');
-        Tree<char>::Node& j_node = d_node.add_child('J');
+        Tree<char>::Node& b_node = tree.add_child(root, 'B');
+        Tree<char>::Node& c_node = tree.add_child(root, 'C');
+        Tree<char>::Node& d_node = tree.add_child(root, 'D');
+        Tree<char>::Node& e_node = tree.add_child(b_node, 'E');
+        Tree<char>::Node& f_node = tree.add_child(d_node, 'F');
+        Tree<char>::Node& g_node = tree.add_child(d_node, 'G');
+        Tree<char>::Node& h_node = tree.add_child(d_node, 'H');
+        Tree<char>::Node& j_node = tree.add_child(d_node, 'J');
 
-        for(Tree<char>::PreOrderIterator it = tree.preorder_begin(); it != tree.preorder_end(); ++it)
+        for(Tree<char>::PreOrderIterator it = tree.begin_preorder(); it != tree.end_preorder(); ++it)
         {
             std::cout << *it << std::endl;
         }
