@@ -20,11 +20,20 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 option(UTILS_BUILD_TESTS "Build tests." OFF)
 
 ###############################################################################
-# Utils.
+# Project.
 ###############################################################################
-add_subdirectory(reference)
-add_subdirectory(shared_mutex)
-add_subdirectory(tree)
+project(cpputils VERSION "0.1.0" LANGUAGES CXX)
+
+###############################################################################
+# Library.
+###############################################################################
+add_library(${PROJECT_NAME} INTERFACE)
+add_library(vaneins::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+target_include_directories(${PROJECT_NAME}
+    INTERFACE
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    )
 
 ###############################################################################
 # Tests.

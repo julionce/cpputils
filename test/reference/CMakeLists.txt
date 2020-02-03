@@ -21,7 +21,7 @@ add_executable(${_test_name} ${CMAKE_CURRENT_SOURCE_DIR}/reference.cpp)
 
 target_link_libraries(${_test_name}
     PRIVATE
-        vaneins::util::reference
+        vaneins::cpputils
         Catch2::Catch2
     )
 
