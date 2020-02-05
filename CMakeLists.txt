@@ -17,12 +17,22 @@
 
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
+###############################################################################
+# Options.
+###############################################################################
 option(UTILS_BUILD_TESTS "Build tests." OFF)
 
 ###############################################################################
 # Project.
 ###############################################################################
 project(cpputils VERSION "0.1.0" LANGUAGES CXX)
+
+###############################################################################
+# Configuration.
+###############################################################################
+include(GNUInstallDirs)
+set(DATA_INSTALL_DIR    ${CMAKE_INSTALL_DATADIR}    CACHE PATH "Data install directory.")
+set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE PATH "Headers install directory.")
 
 ###############################################################################
 # Library.
@@ -49,3 +59,32 @@ if(UTILS_BUILD_TESTS)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/shared_mutex)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/tree)
 endif()
+
+###############################################################################
+# Packaging.
+###############################################################################
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    ${PROJECT_SOURCE_DIR}/cmake/packaging/config.cmake.in
+        ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
+    INSTALL_DESTINATION
+        ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake
+    PATH_VARS
+        INCLUDE_INSTALL_DIR
+    )
+
+install(
+    FILES
+        ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
+    DESTINATION
+        ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake
+    COMPONENT
+        library
+    )
+
+install(
+    DIRECTORY
+        ${PROJECT_SOURCE_DIR}/include/
+    DESTINATION
+        ${INCLUDE_INSTALL_DIR}
+    )
