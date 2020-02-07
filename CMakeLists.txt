@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with vaneins::cpputils.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
 ###############################################################################
 # Options.
@@ -35,6 +35,25 @@ set(DATA_INSTALL_DIR    ${CMAKE_INSTALL_DATADIR}    CACHE PATH "Data install dir
 set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE PATH "Headers install directory.")
 
 ###############################################################################
+# Dependencies.
+###############################################################################
+include(FetchContent)
+FetchContent_Declare(harvester
+    GIT_REPOSITORY
+        git@github.com:julibert/harvester.git
+    GIT_TAG
+        master
+    )
+FetchContent_GetProperties(harvester)
+if(NOT harvester_POPULATED)
+    FetchContent_Populate(harvester)
+endif()
+list(APPEND CMAKE_MODULE_PATH "${harvester_SOURCE_DIR}")
+include(HarvestPackage)
+
+harvest_package(Catch2)
+
+###############################################################################
 # Library.
 ###############################################################################
 add_library(${PROJECT_NAME} INTERFACE)
@@ -50,10 +69,7 @@ target_include_directories(${PROJECT_NAME}
 ###############################################################################
 if(UTILS_BUILD_TESTS)
     include(CTest)
-    include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/Catch.cmake)
-    include(${PROJECT_SOURCE_DIR}/thirdparty/catch2/contrib/ParseAndAddCatchTests.cmake)
-
-    add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/catch2)
+    include(Catch)
 
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/reference)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/shared_mutex)
