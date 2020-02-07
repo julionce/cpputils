@@ -1,3 +1,3 @@
-# vaneins::cpputils
+# julibert::cpputils
 
 A collection of C++ utilities.
