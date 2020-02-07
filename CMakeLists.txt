@@ -98,6 +98,22 @@ install(
     )
 
 install(
+    TARGETS
+        cpputils
+    EXPORT
+        cpputils-targets
+    )
+
+install(
+    EXPORT
+        cpputils-targets
+    NAMESPACE
+        julibert::
+    DESTINATION
+        ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake
+    )
+
+install(
     DIRECTORY
         ${PROJECT_SOURCE_DIR}/include/
     DESTINATION
