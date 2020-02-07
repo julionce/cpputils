@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 ###############################################################################
 # Options.
 ###############################################################################
-option(UTILS_BUILD_TESTS "Build tests." OFF)
+option(CPPUTILS_BUILD_TESTS "Build tests." OFF)
 
 ###############################################################################
 # Project.
@@ -51,8 +51,6 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${harvester_SOURCE_DIR}")
 include(HarvestPackage)
 
-harvest_package(Catch2)
-
 ###############################################################################
 # Library.
 ###############################################################################
@@ -67,7 +65,8 @@ target_include_directories(${PROJECT_NAME}
 ###############################################################################
 # Tests.
 ###############################################################################
-if(UTILS_BUILD_TESTS)
+if(CPPUTILS_BUILD_TESTS)
+    harvest_package(Catch2)
     include(CTest)
     include(Catch)
 
