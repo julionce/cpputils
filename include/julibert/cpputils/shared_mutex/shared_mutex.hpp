@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with julibert::cpputils.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef VANEINS_UTIL_SHAREDMUTEX_SHAREDMUTEX_HPP_
-#define VANEINS_UTIL_SHAREDMUTEX_SHAREDMUTEX_HPP_
+#ifndef JULIBERT_CPPUTILS_SHAREDMUTEX_SHAREDMUTEX_HPP_
+#define JULIBERT_CPPUTILS_SHAREDMUTEX_SHAREDMUTEX_HPP_
 
 #include <thread>
 #include <mutex>
@@ -147,4 +147,4 @@ private:
 } // namespace cpputils
 } // namespace julibert
 
-#endif // VANEINS_UTIL_SHAREDMUTEX_SHAREDMUTEX_HPP_
+#endif // JULIBERT_CPPUTILS_SHAREDMUTEX_SHAREDMUTEX_HPP_

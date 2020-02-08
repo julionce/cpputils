@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with julibert::cpputils.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef VANEINS_UTIL_TREE_TREE_HPP_
-#define VANEINS_UTIL_TREE_TREE_HPP_
+#ifndef JULIBERT_CPPUTILS_TREE_TREE_HPP_
+#define JULIBERT_CPPUTILS_TREE_TREE_HPP_
 
 #include <cstdint>
 #include <list>
@@ -187,4 +187,4 @@ private:
 } // namespace cpputils
 } // namespace julibert
 
-#endif // VANEINS_UTIL_TREE_TREE_HPP_
+#endif // JULIBERT_CPPUTILS_TREE_TREE_HPP_
