@@ -93,20 +93,18 @@ install(
         ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
     DESTINATION
         ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake
-    COMPONENT
-        library
     )
 
 install(
     TARGETS
-        cpputils
+        ${PROJECT_NAME}
     EXPORT
-        cpputils-targets
+        ${PROJECT_NAME}-targets
     )
 
 install(
     EXPORT
-        cpputils-targets
+        ${PROJECT_NAME}-targets
     NAMESPACE
         julibert::
     DESTINATION
