@@ -47,26 +47,37 @@ SCENARIO("Tree<int>::Node")
     {
         Tree<int> tree(11);
         Tree<int>::Node root = tree.get_root();
-        REQUIRE(11 == *root);
+        REQUIRE(11 == root->data());
 
         THEN("its parent shall be itself")
         {
-            REQUIRE(&root == &tree.get_parent(root));
+            REQUIRE(root == tree.get_parent(root));
         }
 
         WHEN("a child and a grandchild are added")
         {
             Tree<int>::Node child = tree.add_child(root, 1);
             Tree<int>::Node grandchild = tree.add_child(child, 2);
-            REQUIRE(1 == *child);
-            REQUIRE(2 == *grandchild);
+            REQUIRE(1 == child->data());
+            REQUIRE(2 == grandchild->data());
 
             THEN("the family hierarchy shall be satisfied")
             {
-                REQUIRE(&tree.get_parent(child) == &tree.get_root());
-                REQUIRE(&tree.get_parent(grandchild) == &child);
-                REQUIRE(&tree.get_parent(tree.get_parent(grandchild)) == &root);
+                REQUIRE(tree.get_parent(child) == tree.get_root());
+                REQUIRE(tree.get_parent(grandchild) == child);
+                REQUIRE(tree.get_parent(tree.get_parent(grandchild)) == root);
             }
+        }
+    }
+
+    GIVEN("a node")
+    {
+        Tree<int> tree(11);
+        Tree<int>::Node node = tree.get_root();
+
+        THEN("it can be reasigned")
+        {
+            node = tree.add_child(node, 89);
         }
     }
 }
@@ -76,8 +87,8 @@ SCENARIO("Tree<Foo>::Node")
     GIVEN("a tree")
     {
         Tree<Foo> tree(11, 11.89);
-        REQUIRE(11 == tree.get_root()->get_a());
-        REQUIRE(11.89 == tree.get_root()->get_b());
+        REQUIRE(11 == tree.get_root()->data().get_a());
+        REQUIRE(11.89 == tree.get_root()->data().get_b());
     }
 }
 

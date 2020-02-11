@@ -19,6 +19,7 @@
 #ifndef JULIBERT_CPPUTILS_TREE_TREE_HPP_
 #define JULIBERT_CPPUTILS_TREE_TREE_HPP_
 
+#include <julibert/cpputils/reference/reference.hpp>
 #include <cstdint>
 #include <list>
 
@@ -28,6 +29,42 @@ namespace cpputils {
 template<typename T>
 class Tree
 {
+public:
+    class NodeImpl;
+
+    using Node = julibert::cpputils::Reference<NodeImpl>;
+    class NodeImpl
+    {
+        friend Tree;
+
+    public:
+        template<class... Args>
+        explicit NodeImpl(
+                Node parent,
+                Node preorder_prev,
+                Node preorder_next,
+                Args&&... args)
+            : data_{std::forward<Args>(args)...}
+            , parent_{parent}
+            , youngest_child_{Node::null()}
+            , preorder_prev_{preorder_prev}
+            , preorder_next_{preorder_next}
+        {}
+
+        const T& data() const { return data_; }
+        bool operator==(const NodeImpl& other) const { this == &other; }
+
+        NodeImpl(const NodeImpl&) = delete;
+        NodeImpl& operator=(const NodeImpl&) = delete;
+
+    private:
+        const T data_;
+        Node const parent_;
+        Node youngest_child_;
+        Node preorder_prev_;
+        Node preorder_next_;
+    };
+
 private:
     template<typename R>
     class ReverseIterator
@@ -53,41 +90,7 @@ private:
         R normal_iterator_;
     };
 
-    class NodeImpl
-    {
-        friend Tree;
-
-        template<class... Args>
-        explicit NodeImpl(
-                NodeImpl* parent,
-                NodeImpl* preorder_prev,
-                NodeImpl* preorder_next,
-                Args&&... args)
-            : data_{std::forward<Args>(args)...}
-            , parent_{parent}
-            , youngest_child_{nullptr}
-            , preorder_prev_{preorder_prev}
-            , preorder_next_{preorder_next}
-        {}
-
-    public:
-        const T& operator*() const { return data_; }
-        const T* operator->() const { return &data_; }
-
-        NodeImpl(const NodeImpl&) = delete;
-        NodeImpl& operator==(const NodeImpl&) = delete;
-
-    private:
-        const T data_;
-        NodeImpl* const parent_;
-        NodeImpl* youngest_child_;
-        NodeImpl* preorder_prev_;
-        NodeImpl* preorder_next_;
-    };
-
 public:
-    using Node = NodeImpl&;
-
     class PreOrderIterator
     {
         friend Tree;
@@ -98,13 +101,13 @@ public:
         using pointer = T*;
         using reference = T&;
 
-        explicit PreOrderIterator(NodeImpl* node = nullptr)
+        explicit PreOrderIterator(Node node = Node::null())
             : node_{node}
         {}
 
         PreOrderIterator& operator++()
         {
-            if (nullptr != node_->preorder_next_)
+            if (node_->preorder_next_)
             {
                 node_ = node_->preorder_next_;
             }
@@ -113,40 +116,36 @@ public:
 
         PreOrderIterator& operator--()
         {
-            if (nullptr != node_->preorder_prev_)
+            if (node_->preorder_prev_)
             {
                 node_ = node_->preorder_prev_;
             }
             return *this;
         }
 
-        bool operator==(const PreOrderIterator& other) const { return (node_ == other.node_); }
+        bool operator==(const PreOrderIterator& other) const { return (node_.operator->() == other.node_.operator->()); }
         bool operator!=(const PreOrderIterator& other) const { return !(*this == other); }
         const T& operator*() const { return node_->data_; }
 
     private:
-        NodeImpl* node_;
+        Node node_;
     };
 
     using RevPreOrderIterator = ReverseIterator<PreOrderIterator>;
 
     template<class... Args>
     explicit Tree(Args&&... args)
-        : root_{nullptr, &first_, &last_, std::forward<Args>(args)...}
-        , first_{nullptr, nullptr, &root_, std::forward<Args>(args)...}
-        , last_{nullptr, &root_, nullptr, std::forward<Args>(args)...}
-    {}
-
-    ~Tree()
+        : root_{Node::null(), Node::null(), Node::null(), std::forward<Args>(args)...}
+        , first_{Node::null(), Node::null(), Node::null(), std::forward<Args>(args)...}
+        , last_{Node::null(), Node::null(), Node::null(), std::forward<Args>(args)...}
     {
-        NodeImpl* node = root_.preorder_next_;
-        while (node != &last_)
-        {
-            NodeImpl* next_node = node->preorder_next_;
-            delete node;
-            node = next_node;
-        }
+        root_->preorder_prev_ = first_;
+        root_->preorder_next_ = last_;
+        first_->preorder_next_ = root_;
+        last_->preorder_prev_ = root_;
     }
+
+    ~Tree() = default;
 
     Node get_root()
     {
@@ -155,33 +154,33 @@ public:
 
     Node get_parent(Node node)
     {
-        return (nullptr != node.parent_) ? *node.parent_ : node;
+        return (!node->parent_.is_null()) ? node->parent_ : node;
     }
 
     template<class... Args>
     Node add_child(Node node, Args&&... args)
     {
-        NodeImpl* prev_node = &node;
-        while (nullptr != prev_node->youngest_child_)
+        Node prev_node = node;
+        while (prev_node->youngest_child_)
         {
             prev_node = prev_node->youngest_child_;
         }
-        NodeImpl* next_node = prev_node->preorder_next_;
-        node.youngest_child_ = new NodeImpl(&node, prev_node, next_node, std::forward<Args>(args)...);
-        prev_node->preorder_next_ = node.youngest_child_;
-        next_node->preorder_prev_ = node.youngest_child_;
-        return *node.youngest_child_;
+        Node next_node = prev_node->preorder_next_;
+        node->youngest_child_ = Node(node, prev_node, next_node, std::forward<Args>(args)...);
+        prev_node->preorder_next_ = node->youngest_child_;
+        next_node->preorder_prev_ = node->youngest_child_;
+        return node->youngest_child_;
     }
 
-    PreOrderIterator begin_preorder() { return PreOrderIterator(&root_); }
-    PreOrderIterator end_preorder() { return PreOrderIterator(&last_); }
-    RevPreOrderIterator rbegin_preorder() { return RevPreOrderIterator(PreOrderIterator(last_.preorder_prev_)); }
-    RevPreOrderIterator rend_preorder() { return RevPreOrderIterator(PreOrderIterator(&first_)); }
+    PreOrderIterator begin_preorder() { return PreOrderIterator(root_); }
+    PreOrderIterator end_preorder() { return PreOrderIterator(last_); }
+    RevPreOrderIterator rbegin_preorder() { return RevPreOrderIterator(PreOrderIterator(last_->preorder_prev_)); }
+    RevPreOrderIterator rend_preorder() { return RevPreOrderIterator(PreOrderIterator(first_)); }
 
 private:
-    NodeImpl root_;
-    NodeImpl first_;
-    NodeImpl last_;
+    Node root_;
+    Node first_;
+    Node last_;
 };
 
 } // namespace cpputils
