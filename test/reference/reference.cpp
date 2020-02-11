@@ -46,29 +46,40 @@ private:
     uint8_t bar_ = 0;
 };
 
+struct MyVoidReferenceImpl
+{
+public:
+    MyVoidReferenceImpl(std::shared_ptr<MyVoidReferenceImpl> ptr)
+    {
+        std::cout << "Here" << std::endl;
+    }
+};
+
 using MyReference = julibert::cpputils::Reference<MyReferenceImpl>;
+using MyVoidReference = julibert::cpputils::Reference<MyVoidReferenceImpl>;
 
 SCENARIO("Reference")
 {
+    MyVoidReference v(std::shared_ptr<MyVoidReferenceImpl>(nullptr));
     GIVEN("a null Reference")
     {
         MyReference foo = MyReference::null();
 
-        THEN("is_null shall return true")
+        THEN("bool() operator shall return true")
         {
-            REQUIRE(foo.is_null());
+            REQUIRE_FALSE(foo);
         }
     }
 
     GIVEN("a Reference")
     {
         MyReference foo(11, 89);
-        REQUIRE_FALSE(foo.is_null());
+        REQUIRE(foo);
 
         THEN("it can be assigned from a prvalue")
         {
             MyReference foo = MyReference();
-            REQUIRE_FALSE(foo.is_null());
+            REQUIRE(foo);
             REQUIRE(0 == foo->get_foo());
             REQUIRE(0 == foo->get_bar());
         }
@@ -76,13 +87,13 @@ SCENARIO("Reference")
         THEN("it can be assigned from a lvalue")
         {
             MyReference bar(1, 1);
-            REQUIRE_FALSE(bar.is_null());
+            REQUIRE(bar);
             REQUIRE(1 == bar->get_foo());
             REQUIRE(1 == bar->get_bar());
 
             foo = bar;
-            REQUIRE_FALSE(bar.is_null());
-            REQUIRE_FALSE(foo.is_null());
+            REQUIRE(bar);
+            REQUIRE(foo);
             REQUIRE(1 == foo->get_foo());
             REQUIRE(1 == foo->get_bar());
         }
@@ -92,23 +103,12 @@ SCENARIO("Reference")
             MyReference bar(11, 89);
 
             foo = std::move(bar);
-            REQUIRE(bar.is_null());
+            REQUIRE_FALSE(bar);
         }
 
-        THEN("it can by copied")
+        THEN("it can by cloned")
         {
-            MyReference bar(MyReference::copy(foo));
-            REQUIRE(11 == bar->get_foo());
-            REQUIRE(89 == bar->get_bar());
-
-            foo->set_foo(0);
-            REQUIRE(11 == bar->get_foo());
-        }
-
-        THEN("it can by copied from")
-        {
-            MyReference bar;
-            bar.copy_from(foo);
+            MyReference bar(MyReference::clone(foo));
             REQUIRE(11 == bar->get_foo());
             REQUIRE(89 == bar->get_bar());
 
@@ -119,7 +119,7 @@ SCENARIO("Reference")
         THEN("we can generate another from this one")
         {
             MyReference bar(foo);
-            REQUIRE_FALSE(foo.is_null());
+            REQUIRE(foo);
             REQUIRE(11 == bar->get_foo());
             REQUIRE(89 == bar->get_bar());
 
@@ -130,7 +130,7 @@ SCENARIO("Reference")
         THEN("we can generate a constant Rerence copying this one")
         {
             const MyReference bar(foo);
-            REQUIRE_FALSE(bar.is_null());
+            REQUIRE(bar);
             REQUIRE(11 == bar->get_foo());
             REQUIRE(89 == bar->get_bar());
 
@@ -141,8 +141,8 @@ SCENARIO("Reference")
         THEN("we can generate a constant Reference moving this one")
         {
             const MyReference bar(std::move(foo));
-            REQUIRE(foo.is_null());
-            REQUIRE_FALSE(bar.is_null());
+            REQUIRE_FALSE(foo);
+            REQUIRE(bar);
         }
     }
 

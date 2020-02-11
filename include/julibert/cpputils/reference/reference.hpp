@@ -42,11 +42,6 @@ public:
     Reference& operator=(Reference& other) = default;
     Reference& operator=(const Reference& other) = default;
 
-    void copy_from(
-        const Reference<T>& other);
-
-    bool is_null() const;
-    
     operator bool() const;
 
     T* operator->();
@@ -64,8 +59,11 @@ public:
 
     static Reference<T> null();
 
-    static Reference<T> copy(
+    static Reference<T> clone(
         const Reference<T>& other);
+
+    static Reference<T> from_shared(
+        const std::shared_ptr<T>& ptr);
 
 private:
     Reference(void*);
@@ -84,26 +82,6 @@ template<typename T>
 inline Reference<T>::Reference(void*)
     : impl_{nullptr}
 {}
-
-template<typename T>
-inline void Reference<T>::copy_from(
-        const Reference<T>& other)
-{
-    if (other.impl_)
-    {
-        impl_ = std::shared_ptr<T>(new T(*other.impl_.get()));
-    }
-    else
-    {
-        impl_.reset();
-    }
-}
-
-template<typename T>
-inline bool Reference<T>::is_null() const
-{
-    return !bool(impl_);
-}
 
 template<typename T>
 inline Reference<T>::operator bool() const
@@ -134,9 +112,9 @@ template<typename R>
 inline bool operator==(const Reference<R>& lhs, const Reference<R>& rhs)
 {
     bool rv = false;
-    if (lhs.is_null() || rhs.is_null())
+    if (!lhs || !rhs)
     {
-        rv = lhs.is_null() && rhs.is_null();
+        rv = !lhs && !rhs;
     }
     else
     {
@@ -165,11 +143,27 @@ inline Reference<T> Reference<T>::null()
 }
 
 template<typename T>
-inline Reference<T> Reference<T>::copy(
+inline Reference<T> Reference<T>::clone(
         const Reference<T>& other)
 {
     Reference<T> rv = Reference<T>::null();
-    rv.copy_from(other);
+    if (other.impl_)
+    {
+        rv.impl_ = std::shared_ptr<T>(new T(*other.impl_.get()));
+    }
+    else
+    {
+        rv.impl_.reset();
+    }
+    return rv;
+}
+
+template<typename T>
+inline Reference<T> Reference<T>::from_shared(
+        const std::shared_ptr<T>& ptr)
+{
+    Reference<T> rv = Reference<T>::null();
+    rv.impl_ = ptr;
     return rv;
 }
 
