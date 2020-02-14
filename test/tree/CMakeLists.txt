@@ -29,7 +29,7 @@ target_link_libraries(${_test_name}
 
 set_target_properties(${_test_name} PROPERTIES
     CXX_STANDARD
-        11
+        17
     CMAKE_CXX_STANDARD_REQUIRED
         YES
     )
