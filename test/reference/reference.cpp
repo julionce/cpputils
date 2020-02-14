@@ -46,21 +46,10 @@ private:
     uint8_t bar_ = 0;
 };
 
-struct MyVoidReferenceImpl
-{
-public:
-    MyVoidReferenceImpl(std::shared_ptr<MyVoidReferenceImpl> ptr)
-    {
-        std::cout << "Here" << std::endl;
-    }
-};
-
 using MyReference = julibert::cpputils::Reference<MyReferenceImpl>;
-using MyVoidReference = julibert::cpputils::Reference<MyVoidReferenceImpl>;
 
 SCENARIO("Reference")
 {
-    MyVoidReference v(std::shared_ptr<MyVoidReferenceImpl>(nullptr));
     GIVEN("a null Reference")
     {
         MyReference foo = MyReference::null();
@@ -165,6 +154,18 @@ SCENARIO("Reference operator==")
 {
     GIVEN("two References")
     {
+        WHEN("both are null")
+        {
+            MyReference foo = MyReference::null();
+            MyReference bar = MyReference::null();
+
+            THEN("operator== shall return true")
+            {
+                REQUIRE(foo == bar);
+                REQUIRE_FALSE(foo != bar);
+            }
+        }
+
         WHEN("one is a copy of the other")
         {
             MyReference foo(11, 89);

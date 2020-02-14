@@ -44,6 +44,10 @@ public:
 
     operator bool() const;
 
+    T* get();
+
+    const T* get() const;
+
     T* operator->();
 
     const T* operator->() const;
@@ -90,6 +94,18 @@ inline Reference<T>::operator bool() const
 }
 
 template<typename T>
+inline T* Reference<T>::get()
+{
+    return this->impl_.get();
+}
+
+template<typename T>
+inline const T* Reference<T>::get() const
+{
+    return this->impl_.get();
+}
+
+template<typename T>
 inline T* Reference<T>::operator->()
 {
     return this->impl_.get();
@@ -118,14 +134,7 @@ inline bool operator==(const Reference<R>& lhs, const Reference<R>& rhs)
     }
     else
     {
-        if (lhs.impl_.get() == rhs.impl_.get())
-        {
-            rv = true;
-        }
-        else
-        {
-            rv = (*lhs.impl_ == *rhs.impl_);
-        }
+        rv = (lhs.impl_.get() == rhs.impl_.get()) ? true : *lhs.impl_ == *rhs.impl_;
     }
     return rv;
 }
