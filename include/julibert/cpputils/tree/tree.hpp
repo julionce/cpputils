@@ -57,7 +57,7 @@ public:
         const T& data() const { return data_; }
         bool operator==(const NodeImpl& other) const { this == &other; }
 
-        Node get_parent()
+        Node get_parent() const
         {
             return parent_;
         }
@@ -165,15 +165,15 @@ public:
         root_->preorder_next_ = last_;
     }
 
-    Node get_root()
+    Node get_root() const
     {
         return root_;
     }
 
-    PreOrderIterator begin_preorder() { return PreOrderIterator(root_); }
-    PreOrderIterator end_preorder() { return PreOrderIterator(last_); }
-    RPreOrderIterator rbegin_preorder() { return RPreOrderIterator(last_->preorder_prev_); }
-    RPreOrderIterator rend_preorder() { return RPreOrderIterator(first_); }
+    PreOrderIterator begin_preorder() const { return PreOrderIterator(root_); }
+    PreOrderIterator end_preorder() const { return PreOrderIterator(last_); }
+    RPreOrderIterator rbegin_preorder() const { return RPreOrderIterator(last_->preorder_prev_); }
+    RPreOrderIterator rend_preorder() const { return RPreOrderIterator(first_); }
 
 private:
     Node root_;
