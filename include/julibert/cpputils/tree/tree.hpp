@@ -78,6 +78,31 @@ public:
             return youngest_child_;
         }
 
+        void add_child(Node node)
+        {
+            if (node)
+            {
+                Node this_node = Node::from_shared(this->shared_from_this());
+                Node prev_node = this_node;
+                while (prev_node->youngest_child_)
+                {
+                    prev_node = prev_node->youngest_child_;
+                }
+                Node next_node = prev_node->preorder_next_;
+                Node last_node = node;
+                while (last_node->preorder_next_)
+                {
+                    last_node = last_node->preorder_next_;
+                }
+                node->parent_ = this_node;
+                youngest_child_ = node;
+                node->preorder_prev_ = prev_node;
+                last_node->preorder_next_ = next_node;
+                prev_node->preorder_next_ = node;
+                next_node->preorder_prev_ = last_node;
+            }
+        }
+
     private:
         const T data_;
         Node const parent_;
@@ -168,6 +193,17 @@ public:
     Node get_root() const
     {
         return root_;
+    }
+
+    void splice(Node & node, Tree & other)
+    {
+        node->preorder_next_->preorder_prev_ = other.last_->preorder_prev_;
+        other.last_->preorder_prev_->preorder_next_ = node->preorder_next_;
+        node->preorder_next_ = other.root_;
+        other.root_->preorder_prev_ = node;
+        other.root_ = Node::null();
+        other.first_ = Node::null();
+        other.last_ = Node::null();
     }
 
     PreOrderIterator begin_preorder() const { return PreOrderIterator(root_); }

@@ -137,3 +137,43 @@ SCENARIO("Pre-order iteration")
         REQUIRE(expected == result);
     }
 }
+
+SCENARIO("Tree splicing")
+{
+    GIVEN("two trees")
+    {
+        Tree<char> tree_foo('A');
+        Tree<char>::Node root_foo = tree_foo.get_root();
+        Tree<char>::Node b_node = root_foo->add_child('B');
+        Tree<char>::Node c_node = root_foo->add_child('C');
+        Tree<char>::Node e_node = b_node->add_child('E');
+
+        Tree<char> tree_bar('D');
+        Tree<char>::Node root_bar = tree_bar.get_root();
+        Tree<char>::Node f_node = root_bar->add_child('F');
+        Tree<char>::Node g_node = root_bar->add_child('G');
+        Tree<char>::Node h_node = root_bar->add_child('H');
+        Tree<char>::Node j_node = root_bar->add_child('J');
+
+        WHEN("one is spliced into the other")
+        {
+            tree_foo.splice(c_node, tree_bar);
+
+            std::vector<char> expected{'A', 'B', 'E', 'C', 'D', 'F', 'G', 'H', 'J'};
+
+            std::vector<char> result{};
+            auto append = [&result](const char& n){ result.push_back(n); };
+
+            for(Tree<char>::PreOrderIterator it = tree_foo.begin_preorder(); it != tree_foo.end_preorder(); ++it)
+            {
+                result.push_back(*it);
+            }
+            REQUIRE(expected == result);
+
+            THEN("the spliced one shall have a clean state")
+            {
+                REQUIRE_FALSE(tree_bar.get_root());
+            }
+        }
+    }
+}
