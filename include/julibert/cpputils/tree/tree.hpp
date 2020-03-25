@@ -108,6 +108,18 @@ void visit_in_preorder(Node<T> const & node, F function)
 
 template<typename T, typename F>
 inline
+void visit_in_rpreorder(Node<T> const & node, F function)
+{
+    std::list<Node<T>> nodes;
+    auto create_list = [&nodes] (Node<T> const & node) {
+        nodes.push_back(node);
+    };
+    visit_in_preorder(node, create_list);
+    std::for_each(nodes.rbegin(), nodes.rend(), function);
+}
+
+template<typename T, typename F>
+inline
 void visit_in_postorder(Node<T> const & node, F function)
 {
     std::function<void(Node<T> const &)> visit_node;
@@ -116,6 +128,18 @@ void visit_in_postorder(Node<T> const & node, F function)
         function(node);
     };
     visit_node(node);
+}
+
+template<typename T, typename F>
+inline
+void visit_in_rpostorder(Node<T> const & node, F function)
+{
+    std::list<Node<T>> nodes;
+    auto create_list = [&nodes] (Node<T> const & node) {
+        nodes.push_back(node);
+    };
+    visit_in_postorder(node, create_list);
+    std::for_each(nodes.rbegin(), nodes.rend(), function);
 }
 
 template<typename T>

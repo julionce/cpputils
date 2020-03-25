@@ -216,7 +216,17 @@ SCENARIO("tree::Node")
                 REQUIRE(result == expected_preorder);
 
                 result.clear();
+                std::reverse(expected_preorder.begin(), expected_preorder.end());
+                tree::visit_in_rpreorder(root, print_node);
+                REQUIRE(result == expected_preorder);
+
+                result.clear();
                 tree::visit_in_postorder(root, print_node);
+                REQUIRE(result == expected_postorder);
+
+                result.clear();
+                std::reverse(expected_postorder.begin(), expected_postorder.end());
+                tree::visit_in_rpostorder(root, print_node);
                 REQUIRE(result == expected_postorder);
             }
         }
