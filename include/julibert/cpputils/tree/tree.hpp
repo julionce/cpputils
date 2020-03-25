@@ -20,11 +20,140 @@
 #define JULIBERT_CPPUTILS_TREE_TREE_HPP_
 
 #include <julibert/cpputils/reference/reference.hpp>
+
 #include <cstdint>
+#include <vector>
 #include <list>
+#include <functional>
 
 namespace julibert {
 namespace cpputils {
+namespace tree {
+
+template<typename T>
+class NodeImpl;
+
+template<typename T>
+using Node = Reference<NodeImpl<T>>;
+
+template<typename T>
+class NodeImpl : public std::enable_shared_from_this<NodeImpl<T>>
+{
+public:
+    template<class... Args>
+    explicit NodeImpl(Args&&... args);
+
+    Node<T> const & get_parent() const { return parent_; }
+    std::vector<Node<T>> const & get_children() const { return children_; }
+
+    template<class... Args>
+    Node<T> const & add_child(Args&&... args);
+
+    T const & data() const { return data_; }
+
+    bool operator==(const NodeImpl& other) const { this == &other; }
+
+private:
+    T data_;
+    Node<T> parent_;
+    std::vector<Node<T>> children_;
+};
+
+template<typename T>
+template<class... Args>
+inline
+NodeImpl<T>::NodeImpl(Args&&... args)
+    : data_{std::forward<Args>(args)...}
+    , parent_{Node<T>::null()}
+    , children_{}
+{}
+
+template<typename T>
+template<class... Args>
+inline
+Node<T> const & NodeImpl<T>::add_child(Args&&... args)
+{
+    children_.emplace_back(std::forward<Args>(args)...);
+    children_.back()->parent_ = Node<T>::from_shared(this->shared_from_this());
+    return children_.back();
+}
+
+template<typename T>
+class PreOrder
+{
+public:
+    PreOrder(Node<T> const & node);
+
+    std::list<Node<T>> const & get_nodes() const { return nodes_; }
+    std::list<Node<T>> & get_nodes() { return nodes_; }
+
+private:
+    void push_node(Node<T> const & node);
+
+private:
+    std::list<Node<T>> nodes_;
+};
+
+template<typename T, typename F>
+inline
+void visit_in_preorder(Node<T> const & node, F function)
+{
+    std::function<void(Node<T> const &)> visit_node;
+    visit_node = [&function, &visit_node] (Node<T> const & node) {
+        function(node);
+        for (auto& n : node->get_children()) { visit_node(n); }
+    };
+    visit_node(node);
+}
+
+template<typename T, typename F>
+inline
+void visit_in_postorder(Node<T> const & node, F function)
+{
+    std::function<void(Node<T> const &)> visit_node;
+    visit_node = [&function, &visit_node] (Node<T> const & node) {
+        for (auto& n : node->get_children()) { visit_node(n); }
+        function(node);
+    };
+    visit_node(node);
+}
+
+template<typename T>
+class PostOrder
+{
+public:
+    PostOrder(Node<T> const & node);
+
+    std::list<Node<T>> const & get_nodes() const { return nodes_; }
+    std::list<Node<T>> & get_nodes() { return nodes_; }
+
+private:
+    void push_node(Node<T> const & node);
+
+private:
+    std::list<Node<T>> nodes_;
+};
+
+template<typename T>
+inline
+PostOrder<T>::PostOrder(Node<T> const & node)
+    : nodes_{}
+{
+    push_node(node);
+}
+
+template<typename T>
+inline
+void PostOrder<T>::push_node(Node<T> const & node)
+{
+    for (auto& n : node->get_children())
+    {
+        push_node(n);
+    }
+    nodes_.push_back(node);
+}
+
+} // namespace tree
 
 template<typename T>
 class Tree

@@ -177,3 +177,49 @@ SCENARIO("Tree splicing")
         }
     }
 }
+
+SCENARIO("tree::Node")
+{
+    using Node = tree::Node<char>;
+    GIVEN("a Node")
+    {
+        Node root{'F'};
+
+        WHEN("children are added")
+        {
+            Node b_node = root->add_child('B');
+            Node a_node = b_node->add_child('A');
+            Node d_node = b_node->add_child('D');
+            Node c_node = d_node->add_child('C');
+            Node e_node = d_node->add_child('E');
+            Node g_node = root->add_child('G');
+            Node i_node = g_node->add_child('I');
+            Node h_node = i_node->add_child('H');
+
+            THEN("the parent of its children shall be itseft")
+            {
+                REQUIRE(b_node->get_parent() == root);
+                REQUIRE(a_node->get_parent() == b_node);
+            }
+
+            THEN("we shall be able to visit in pre-order and post-order")
+            {
+                std::vector<char> result;
+                std::vector<char> expected_preorder{'F', 'B', 'A', 'D', 'C', 'E', 'G', 'I', 'H'};
+                std::vector<char> expected_postorder{'A', 'C', 'E', 'D', 'B', 'H', 'I', 'G', 'F'};
+
+                auto print_node = [&result] (tree::Node<char> const & node) {
+                    result.push_back(node->data());
+                };
+
+                tree::visit_in_preorder(root, print_node);
+                REQUIRE(result == expected_preorder);
+
+                result.clear();
+                tree::visit_in_postorder(root, print_node);
+                REQUIRE(result == expected_postorder);
+            }
+        }
+    }
+
+}
