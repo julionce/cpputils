@@ -51,7 +51,7 @@ public:
 
     T const & data() const { return data_; }
 
-    bool operator==(const NodeImpl& other) const { this == &other; }
+    bool operator==(const NodeImpl& other) const { return this == &other; }
 
 private:
     T data_;
@@ -208,7 +208,7 @@ public:
         NodeImpl& operator=(const NodeImpl&) = delete;
 
         const T& data() const { return data_; }
-        bool operator==(const NodeImpl& other) const { this == &other; }
+        bool operator==(const NodeImpl& other) const { return this == &other; }
 
         Node get_parent() const
         {
