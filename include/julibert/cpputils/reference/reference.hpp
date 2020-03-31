@@ -36,11 +36,11 @@ public:
     virtual ~Reference() = default;
 
     Reference(Reference && other) = default;
-    Reference(Reference & other) { impl_ = other.impl_; };
-    Reference(Reference const & other) { impl_ = other.impl_; };
+    Reference(Reference & other) noexcept : impl_{other.impl_} {}
+    Reference(Reference const & other) noexcept : impl_{other.impl_} {}
     Reference& operator=(Reference && other) = default;
-    Reference& operator=(Reference & other) { impl_ = other.impl_; return *this; };
-    Reference& operator=(Reference const & other) { impl_ = other.impl_; return *this; };
+    Reference& operator=(Reference & other) noexcept { impl_ = other.impl_; return *this; };
+    Reference& operator=(Reference const & other) noexcept { impl_ = other.impl_; return *this; };
 
     operator bool() const;
 
