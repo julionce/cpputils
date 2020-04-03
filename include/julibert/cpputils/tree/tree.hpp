@@ -50,6 +50,7 @@ public:
     Node<T> const & add_child(Args&&... args);
 
     T const & data() const { return data_; }
+    T & data() { return data_; }
 
     bool operator==(const NodeImpl& other) const { return this == &other; }
 
