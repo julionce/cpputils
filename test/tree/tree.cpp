@@ -208,25 +208,18 @@ SCENARIO("tree::Node")
                 std::vector<char> expected_preorder{'F', 'B', 'A', 'D', 'C', 'E', 'G', 'I', 'H'};
                 std::vector<char> expected_postorder{'A', 'C', 'E', 'D', 'B', 'H', 'I', 'G', 'F'};
 
-                auto print_node = [&result] (tree::Node<char> const & node) {
+                auto push_result = [&result] (tree::Node<char> const & node) {
                     result.push_back(node->data());
                 };
 
-                tree::visit_in_preorder(root, print_node);
+                std::list<Node> preorder_list = tree::preorder_list(root);
+                std::list<Node> postorder_list = tree::postorder_list(root);
+
+                std::for_each(preorder_list.begin(), preorder_list.end(), push_result);
                 REQUIRE(result == expected_preorder);
 
                 result.clear();
-                std::reverse(expected_preorder.begin(), expected_preorder.end());
-                tree::visit_in_rpreorder(root, print_node);
-                REQUIRE(result == expected_preorder);
-
-                result.clear();
-                tree::visit_in_postorder(root, print_node);
-                REQUIRE(result == expected_postorder);
-
-                result.clear();
-                std::reverse(expected_postorder.begin(), expected_postorder.end());
-                tree::visit_in_rpostorder(root, print_node);
+                std::for_each(postorder_list.begin(), postorder_list.end(), push_result);
                 REQUIRE(result == expected_postorder);
             }
         }

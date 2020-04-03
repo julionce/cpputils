@@ -79,102 +79,29 @@ Node<T> const & NodeImpl<T>::add_child(Args&&... args)
 }
 
 template<typename T>
-class PreOrder
-{
-public:
-    PreOrder(Node<T> const & node);
-
-    std::list<Node<T>> const & get_nodes() const { return nodes_; }
-    std::list<Node<T>> & get_nodes() { return nodes_; }
-
-private:
-    void push_node(Node<T> const & node);
-
-private:
-    std::list<Node<T>> nodes_;
-};
-
-template<typename T, typename F>
-inline
-void visit_in_preorder(Node<T> const & node, F function)
-{
-    std::function<void(Node<T> const &)> visit_node;
-    visit_node = [&function, &visit_node] (Node<T> const & node) {
-        function(node);
-        for (auto& n : node->get_children()) { visit_node(n); }
-    };
-    visit_node(node);
-}
-
-template<typename T, typename F>
-inline
-void visit_in_rpreorder(Node<T> const & node, F function)
+std::list<Node<T>> preorder_list(Node<T> const & root)
 {
     std::list<Node<T>> nodes;
-    auto create_list = [&nodes] (Node<T> const & node) {
+    std::function<void(Node<T> const &)> push_node;
+    push_node = [&nodes, &push_node] (Node<T> const & node) {
         nodes.push_back(node);
+        for (auto & n : node->get_children()) { push_node(n); }
     };
-    visit_in_preorder(node, create_list);
-    std::for_each(nodes.rbegin(), nodes.rend(), function);
+    push_node(root);
+    return nodes;
 }
 
-template<typename T, typename F>
-inline
-void visit_in_postorder(Node<T> const & node, F function)
-{
-    std::function<void(Node<T> const &)> visit_node;
-    visit_node = [&function, &visit_node] (Node<T> const & node) {
-        for (auto& n : node->get_children()) { visit_node(n); }
-        function(node);
-    };
-    visit_node(node);
-}
-
-template<typename T, typename F>
-inline
-void visit_in_rpostorder(Node<T> const & node, F function)
+template<typename T>
+std::list<Node<T>> postorder_list(Node<T> const & root)
 {
     std::list<Node<T>> nodes;
-    auto create_list = [&nodes] (Node<T> const & node) {
+    std::function<void(Node<T> const &)> push_node;
+    push_node = [&nodes, &push_node] (Node<T> const & node) {
+        for (auto & n : node->get_children()) { push_node(n); }
         nodes.push_back(node);
     };
-    visit_in_postorder(node, create_list);
-    std::for_each(nodes.rbegin(), nodes.rend(), function);
-}
-
-template<typename T>
-class PostOrder
-{
-public:
-    PostOrder(Node<T> const & node);
-
-    std::list<Node<T>> const & get_nodes() const { return nodes_; }
-    std::list<Node<T>> & get_nodes() { return nodes_; }
-
-private:
-    void push_node(Node<T> const & node);
-
-private:
-    std::list<Node<T>> nodes_;
-};
-
-template<typename T>
-inline
-PostOrder<T>::PostOrder(Node<T> const & node)
-    : nodes_{}
-{
-    push_node(node);
-}
-
-template<typename T>
-inline
-void PostOrder<T>::push_node(Node<T> const & node)
-{
-    for (auto& n : node->get_children())
-    {
-        push_node(n);
-    }
-    nodes_.push_back(node);
+    push_node(root);
+    return nodes;
 }
 
 } // namespace tree
