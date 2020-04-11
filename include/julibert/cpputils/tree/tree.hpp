@@ -49,6 +49,9 @@ public:
     template<class... Args>
     Node<T> const & add_child(Args&&... args);
 
+    template<class R>
+    bool import_node_as_child(R&& child_node);
+
     T const & data() const { return data_; }
     T & data() { return data_; }
 
@@ -77,6 +80,22 @@ Node<T> const & NodeImpl<T>::add_child(Args&&... args)
     children_.emplace_back(std::forward<Args>(args)...);
     children_.back()->parent_ = Node<T>::from_shared(this->shared_from_this());
     return children_.back();
+}
+
+template<class T>
+template<class R>
+inline
+bool NodeImpl<T>::import_node_as_child(R&& child_node)
+{
+    bool rv = false;
+    NodeImpl* node_ptr = std::forward<Node<T>>(child_node).get();
+    if (!node_ptr->parent_)
+    {
+        node_ptr->parent_ = Node<T>::from_shared(this->shared_from_this());
+        children_.push_back(std::forward<Node<T>>(child_node));
+        rv = true;
+    }
+    return rv;
 }
 
 template<typename T>

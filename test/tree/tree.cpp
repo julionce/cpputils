@@ -191,10 +191,11 @@ SCENARIO("tree::Node")
             Node a_node = b_node->add_child('A');
             Node d_node = b_node->add_child('D');
             Node c_node = d_node->add_child('C');
-            Node e_node = d_node->add_child('E');
+            REQUIRE(d_node->import_node_as_child(Node{'E'}));
             Node g_node = root->add_child('G');
             Node i_node = g_node->add_child('I');
-            Node h_node = i_node->add_child('H');
+            Node h_node{'H'};
+            REQUIRE(i_node->import_node_as_child(h_node));
 
             THEN("the parent of its children shall be itseft")
             {
