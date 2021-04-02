@@ -73,6 +73,7 @@ if(CPPUTILS_BUILD_TESTS)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/reference)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/shared_mutex)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/tree)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/test/stream)
 endif()
 
 ###############################################################################
