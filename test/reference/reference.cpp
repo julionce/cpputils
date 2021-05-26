@@ -22,179 +22,177 @@
 
 #include <catch2/catch.hpp>
 
-struct MyReferenceImpl 
+struct MyReferenceImpl
 {
 public:
-    MyReferenceImpl() = default;
+  MyReferenceImpl() = default;
 
-    MyReferenceImpl(uint8_t foo, uint8_t bar)
-        : foo_{foo}
-        , bar_{bar}
-    {}
+  MyReferenceImpl(uint8_t foo, uint8_t bar)
+    : foo_{ foo }
+    , bar_{ bar }
+  {}
 
-    friend bool operator==(const MyReferenceImpl& lhs, const MyReferenceImpl& rhs)
-    {
-        return (lhs.foo_ == rhs.foo_) && (lhs.bar_ == rhs.bar_);
-    }
+  friend bool operator==(const MyReferenceImpl& lhs, const MyReferenceImpl& rhs)
+  {
+    return (lhs.foo_ == rhs.foo_) && (lhs.bar_ == rhs.bar_);
+  }
 
-    void set_foo(uint8_t foo) { foo_ = foo; }
-    uint8_t get_foo() const { return foo_; }
-    uint8_t get_bar() const { return bar_; }
+  void set_foo(uint8_t foo) { foo_ = foo; }
+  uint8_t get_foo() const { return foo_; }
+  uint8_t get_bar() const { return bar_; }
 
 private:
-    uint8_t foo_ = 0;
-    uint8_t bar_ = 0;
+  uint8_t foo_ = 0;
+  uint8_t bar_ = 0;
 };
 
 using MyReference = julibert::cpputils::Reference<MyReferenceImpl>;
 
 SCENARIO("Reference")
 {
-    GIVEN("a null Reference")
-    {
-        MyReference foo = MyReference::null();
+  GIVEN("a null Reference")
+  {
+    MyReference foo = MyReference::null();
 
-        THEN("bool() operator shall return true")
-        {
-            REQUIRE_FALSE(foo);
-        }
+    THEN("bool() operator shall return true") { REQUIRE_FALSE(foo); }
+  }
+
+  GIVEN("a Reference")
+  {
+    MyReference foo(11, 89);
+    REQUIRE(foo);
+
+    THEN("it can be assigned from a prvalue")
+    {
+      MyReference foo = MyReference();
+      REQUIRE(foo);
+      REQUIRE(0 == foo->get_foo());
+      REQUIRE(0 == foo->get_bar());
     }
 
-    GIVEN("a Reference")
+    THEN("it can be assigned from a lvalue")
     {
-        MyReference foo(11, 89);
-        REQUIRE(foo);
+      MyReference bar(1, 1);
+      REQUIRE(bar);
+      REQUIRE(1 == bar->get_foo());
+      REQUIRE(1 == bar->get_bar());
 
-        THEN("it can be assigned from a prvalue")
-        {
-            MyReference foo = MyReference();
-            REQUIRE(foo);
-            REQUIRE(0 == foo->get_foo());
-            REQUIRE(0 == foo->get_bar());
-        }
-
-        THEN("it can be assigned from a lvalue")
-        {
-            MyReference bar(1, 1);
-            REQUIRE(bar);
-            REQUIRE(1 == bar->get_foo());
-            REQUIRE(1 == bar->get_bar());
-
-            foo = bar;
-            REQUIRE(bar);
-            REQUIRE(foo);
-            REQUIRE(1 == foo->get_foo());
-            REQUIRE(1 == foo->get_bar());
-        }
-
-        THEN("it can be assigned from an xvalue")
-        {
-            MyReference bar(11, 89);
-
-            foo = std::move(bar);
-            REQUIRE_FALSE(bar);
-        }
-
-        THEN("it can by cloned")
-        {
-            MyReference bar(MyReference::clone(foo));
-            REQUIRE(11 == bar->get_foo());
-            REQUIRE(89 == bar->get_bar());
-
-            foo->set_foo(0);
-            REQUIRE(11 == bar->get_foo());
-        }
-
-        THEN("we can generate another from this one")
-        {
-            MyReference bar(foo);
-            REQUIRE(foo);
-            REQUIRE(11 == bar->get_foo());
-            REQUIRE(89 == bar->get_bar());
-
-            foo->set_foo(0);
-            REQUIRE(0 == bar->get_foo());
-        }
-
-        THEN("we can generate a constant Rerence copying this one")
-        {
-            const MyReference bar(foo);
-            REQUIRE(bar);
-            REQUIRE(11 == bar->get_foo());
-            REQUIRE(89 == bar->get_bar());
-
-            foo->set_foo(12);
-            REQUIRE(12 == bar->get_foo());
-        }
-
-        THEN("we can generate a constant Reference moving this one")
-        {
-            const MyReference bar(std::move(foo));
-            REQUIRE_FALSE(foo);
-            REQUIRE(bar);
-        }
+      foo = bar;
+      REQUIRE(bar);
+      REQUIRE(foo);
+      REQUIRE(1 == foo->get_foo());
+      REQUIRE(1 == foo->get_bar());
     }
 
-    GIVEN("a constant Reference, its constant implementation methods are available")
+    THEN("it can be assigned from an xvalue")
     {
-        const MyReference foo(11, 89);
-        // foo->set_foo(11); // It would give an error.
-        REQUIRE(11 == foo->get_foo());
+      MyReference bar(11, 89);
+
+      foo = std::move(bar);
+      REQUIRE_FALSE(bar);
     }
 
-    GIVEN("a Reference, its implementation methods are available")
+    THEN("it can by cloned")
     {
-        MyReference foo(0, 0);
-        foo->set_foo(11);
-        REQUIRE(11 == foo->get_foo());
+      MyReference bar(MyReference::clone(foo));
+      REQUIRE(11 == bar->get_foo());
+      REQUIRE(89 == bar->get_bar());
+
+      foo->set_foo(0);
+      REQUIRE(11 == bar->get_foo());
     }
+
+    THEN("we can generate another from this one")
+    {
+      MyReference bar(foo);
+      REQUIRE(foo);
+      REQUIRE(11 == bar->get_foo());
+      REQUIRE(89 == bar->get_bar());
+
+      foo->set_foo(0);
+      REQUIRE(0 == bar->get_foo());
+    }
+
+    THEN("we can generate a constant Rerence copying this one")
+    {
+      const MyReference bar(foo);
+      REQUIRE(bar);
+      REQUIRE(11 == bar->get_foo());
+      REQUIRE(89 == bar->get_bar());
+
+      foo->set_foo(12);
+      REQUIRE(12 == bar->get_foo());
+    }
+
+    THEN("we can generate a constant Reference moving this one")
+    {
+      const MyReference bar(std::move(foo));
+      REQUIRE_FALSE(foo);
+      REQUIRE(bar);
+    }
+  }
+
+  GIVEN(
+    "a constant Reference, its constant implementation methods are available")
+  {
+    const MyReference foo(11, 89);
+    // foo->set_foo(11); // It would give an error.
+    REQUIRE(11 == foo->get_foo());
+  }
+
+  GIVEN("a Reference, its implementation methods are available")
+  {
+    MyReference foo(0, 0);
+    foo->set_foo(11);
+    REQUIRE(11 == foo->get_foo());
+  }
 }
 
 SCENARIO("Reference operator==")
 {
-    GIVEN("two References")
+  GIVEN("two References")
+  {
+    WHEN("both are null")
     {
-        WHEN("both are null")
-        {
-            MyReference foo = MyReference::null();
-            MyReference bar = MyReference::null();
+      MyReference foo = MyReference::null();
+      MyReference bar = MyReference::null();
 
-            THEN("operator== shall return true")
-            {
-                REQUIRE(foo == bar);
-                REQUIRE_FALSE(foo != bar);
-            }
-        }
-
-        WHEN("one is a copy of the other")
-        {
-            MyReference foo(11, 89);
-            MyReference bar(foo);
-
-            THEN("operator== shall return true")
-            {
-                REQUIRE(foo == bar);
-                REQUIRE_FALSE(foo != bar);
-            }
-        }
-
-        WHEN("they are contructed independenly")
-        {
-            THEN("if they are equal the operator== shall return true")
-            {
-                MyReference foo(11, 89);
-                MyReference bar(11, 89);
-                REQUIRE(foo == bar);
-                REQUIRE_FALSE(foo != bar);
-            }
-
-            THEN("if they are different the operator== shall return false")
-            {
-                MyReference foo(11, 89);
-                MyReference bar(11, 79);
-                REQUIRE_FALSE(foo == bar);
-                REQUIRE(foo != bar);
-            }
-        }
+      THEN("operator== shall return true")
+      {
+        REQUIRE(foo == bar);
+        REQUIRE_FALSE(foo != bar);
+      }
     }
+
+    WHEN("one is a copy of the other")
+    {
+      MyReference foo(11, 89);
+      MyReference bar(foo);
+
+      THEN("operator== shall return true")
+      {
+        REQUIRE(foo == bar);
+        REQUIRE_FALSE(foo != bar);
+      }
+    }
+
+    WHEN("they are contructed independenly")
+    {
+      THEN("if they are equal the operator== shall return true")
+      {
+        MyReference foo(11, 89);
+        MyReference bar(11, 89);
+        REQUIRE(foo == bar);
+        REQUIRE_FALSE(foo != bar);
+      }
+
+      THEN("if they are different the operator== shall return false")
+      {
+        MyReference foo(11, 89);
+        MyReference bar(11, 79);
+        REQUIRE_FALSE(foo == bar);
+        REQUIRE(foo != bar);
+      }
+    }
+  }
 }

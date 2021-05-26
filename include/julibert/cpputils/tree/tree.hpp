@@ -22,9 +22,9 @@
 #include <julibert/cpputils/reference/reference.hpp>
 
 #include <cstdint>
-#include <vector>
-#include <list>
 #include <functional>
+#include <list>
+#include <vector>
 
 namespace julibert {
 namespace cpputils {
@@ -40,88 +40,92 @@ template<typename T>
 class NodeImpl : public std::enable_shared_from_this<NodeImpl<T>>
 {
 public:
-    template<class... Args>
-    explicit NodeImpl(Args&&... args);
+  template<class... Args>
+  explicit NodeImpl(Args&&... args);
 
-    Node<T> const & get_parent() const { return parent_; }
-    std::vector<Node<T>> const & get_children() const { return children_; }
+  Node<T> const& get_parent() const { return parent_; }
+  std::vector<Node<T>> const& get_children() const { return children_; }
 
-    template<class... Args>
-    Node<T> const & add_child(Args&&... args);
+  template<class... Args>
+  Node<T> const& add_child(Args&&... args);
 
-    template<class R>
-    bool import_node_as_child(R&& child_node);
+  template<class R>
+  bool import_node_as_child(R&& child_node);
 
-    T const & data() const { return data_; }
-    T & data() { return data_; }
+  T const& data() const { return data_; }
+  T& data() { return data_; }
 
-    bool operator==(const NodeImpl& other) const { return this == &other; }
+  bool operator==(const NodeImpl& other) const { return this == &other; }
 
 private:
-    T data_;
-    Node<T> parent_;
-    std::vector<Node<T>> children_;
+  T data_;
+  Node<T> parent_;
+  std::vector<Node<T>> children_;
 };
 
 template<typename T>
 template<class... Args>
-inline
-NodeImpl<T>::NodeImpl(Args&&... args)
-    : data_{std::forward<Args>(args)...}
-    , parent_{Node<T>::null()}
-    , children_{}
+inline NodeImpl<T>::NodeImpl(Args&&... args)
+  : data_{ std::forward<Args>(args)... }
+  , parent_{ Node<T>::null() }
+  , children_{}
 {}
 
 template<typename T>
 template<class... Args>
-inline
-Node<T> const & NodeImpl<T>::add_child(Args&&... args)
+inline Node<T> const&
+NodeImpl<T>::add_child(Args&&... args)
 {
-    children_.emplace_back(std::forward<Args>(args)...);
-    children_.back()->parent_ = Node<T>::from_shared(this->shared_from_this());
-    return children_.back();
+  children_.emplace_back(std::forward<Args>(args)...);
+  children_.back()->parent_ = Node<T>::from_shared(this->shared_from_this());
+  return children_.back();
 }
 
 template<class T>
 template<class R>
-inline
-bool NodeImpl<T>::import_node_as_child(R&& child_node)
+inline bool
+NodeImpl<T>::import_node_as_child(R&& child_node)
 {
-    bool rv = false;
-    NodeImpl* node_ptr = std::forward<Node<T>>(child_node).get();
-    if (!node_ptr->parent_)
-    {
-        node_ptr->parent_ = Node<T>::from_shared(this->shared_from_this());
-        children_.push_back(std::forward<Node<T>>(child_node));
-        rv = true;
+  bool rv = false;
+  NodeImpl* node_ptr = std::forward<Node<T>>(child_node).get();
+  if (!node_ptr->parent_) {
+    node_ptr->parent_ = Node<T>::from_shared(this->shared_from_this());
+    children_.push_back(std::forward<Node<T>>(child_node));
+    rv = true;
+  }
+  return rv;
+}
+
+template<typename T>
+std::list<Node<T>>
+preorder_list(Node<T> const& root)
+{
+  std::list<Node<T>> nodes;
+  std::function<void(Node<T> const&)> push_node;
+  push_node = [&nodes, &push_node](Node<T> const& node) {
+    nodes.push_back(node);
+    for (auto& n : node->get_children()) {
+      push_node(n);
     }
-    return rv;
+  };
+  push_node(root);
+  return nodes;
 }
 
 template<typename T>
-std::list<Node<T>> preorder_list(Node<T> const & root)
+std::list<Node<T>>
+postorder_list(Node<T> const& root)
 {
-    std::list<Node<T>> nodes;
-    std::function<void(Node<T> const &)> push_node;
-    push_node = [&nodes, &push_node] (Node<T> const & node) {
-        nodes.push_back(node);
-        for (auto & n : node->get_children()) { push_node(n); }
-    };
-    push_node(root);
-    return nodes;
-}
-
-template<typename T>
-std::list<Node<T>> postorder_list(Node<T> const & root)
-{
-    std::list<Node<T>> nodes;
-    std::function<void(Node<T> const &)> push_node;
-    push_node = [&nodes, &push_node] (Node<T> const & node) {
-        for (auto & n : node->get_children()) { push_node(n); }
-        nodes.push_back(node);
-    };
-    push_node(root);
-    return nodes;
+  std::list<Node<T>> nodes;
+  std::function<void(Node<T> const&)> push_node;
+  push_node = [&nodes, &push_node](Node<T> const& node) {
+    for (auto& n : node->get_children()) {
+      push_node(n);
+    }
+    nodes.push_back(node);
+  };
+  push_node(root);
+  return nodes;
 }
 
 } // namespace tree
@@ -130,191 +134,206 @@ template<typename T>
 class Tree
 {
 public:
-    class NodeImpl;
+  class NodeImpl;
 
-    using Node = julibert::cpputils::Reference<NodeImpl>;
-    class NodeImpl : public std::enable_shared_from_this<NodeImpl>
-    {
-        friend Tree;
+  using Node = julibert::cpputils::Reference<NodeImpl>;
+  class NodeImpl : public std::enable_shared_from_this<NodeImpl>
+  {
+    friend Tree;
 
-    public:
-        template<class... Args>
-        explicit NodeImpl(
-                Node parent,
-                Node preorder_prev,
-                Node preorder_next,
-                Args&&... args)
-            : data_{std::forward<Args>(args)...}
-            , parent_{parent}
-            , youngest_child_{Node::null()}
-            , preorder_prev_{preorder_prev}
-            , preorder_next_{preorder_next}
-        {}
+  public:
+    template<class... Args>
+    explicit NodeImpl(Node parent,
+                      Node preorder_prev,
+                      Node preorder_next,
+                      Args&&... args)
+      : data_{ std::forward<Args>(args)... }
+      , parent_{ parent }
+      , youngest_child_{ Node::null() }
+      , preorder_prev_{ preorder_prev }
+      , preorder_next_{ preorder_next }
+    {}
 
-        NodeImpl(const NodeImpl&) = delete;
-        NodeImpl& operator=(const NodeImpl&) = delete;
+    NodeImpl(const NodeImpl&) = delete;
+    NodeImpl& operator=(const NodeImpl&) = delete;
 
-        const T& data() const { return data_; }
-        bool operator==(const NodeImpl& other) const { return this == &other; }
+    const T& data() const { return data_; }
+    bool operator==(const NodeImpl& other) const { return this == &other; }
 
-        Node get_parent() const
-        {
-            return parent_;
-        }
-
-        template<class... Args>
-        Node add_child(Args&&... args)
-        {
-            Node this_node = Node::from_shared(this->shared_from_this());
-            Node prev_node = this_node;
-            while (prev_node->youngest_child_)
-            {
-                prev_node = prev_node->youngest_child_;
-            }
-            Node next_node = prev_node->preorder_next_;
-            youngest_child_ = Node(this_node, prev_node, next_node, std::forward<Args>(args)...);
-            prev_node->preorder_next_ = youngest_child_;
-            next_node->preorder_prev_ = youngest_child_;
-            return youngest_child_;
-        }
-
-        void add_child(Node node)
-        {
-            if (node)
-            {
-                Node this_node = Node::from_shared(this->shared_from_this());
-                Node prev_node = this_node;
-                while (prev_node->youngest_child_)
-                {
-                    prev_node = prev_node->youngest_child_;
-                }
-                Node next_node = prev_node->preorder_next_;
-                Node last_node = node;
-                while (last_node->preorder_next_)
-                {
-                    last_node = last_node->preorder_next_;
-                }
-                node->parent_ = this_node;
-                youngest_child_ = node;
-                node->preorder_prev_ = prev_node;
-                last_node->preorder_next_ = next_node;
-                prev_node->preorder_next_ = node;
-                next_node->preorder_prev_ = last_node;
-            }
-        }
-
-    private:
-        const T data_;
-        Node const parent_;
-        Node youngest_child_;
-        Node preorder_prev_;
-        Node preorder_next_;
-    };
-
-private:
-    template<typename R>
-    class ReverseIterator
-    {
-    public:
-        using iterator_category = typename R::iterator_category;
-        using value_type = typename R::value_type;
-        using difference_type = typename R::difference_type;
-        using pointer = typename R::pointer;
-        using reference = typename R::reference;
-
-        template<class... Args>
-        explicit ReverseIterator(Args... args)
-            : normal_it_{std::forward<Args>(args)...}
-        {}
-
-        ReverseIterator& operator++() { --normal_it_; return *this; }
-        ReverseIterator& operator--() { ++normal_it_; return *this; }
-        bool operator==(const ReverseIterator& other) const { return (normal_it_ == other.normal_it_); }
-        bool operator!=(const ReverseIterator& other) const { return (normal_it_ != other.normal_it_); }
-        const value_type& operator*() const { return *normal_it_; }
-
-    private:
-        R normal_it_;
-    };
-
-public:
-    class PreOrderIterator
-    {
-        friend Tree;
-    public:
-        using iterator_category = std::bidirectional_iterator_tag;
-        using value_type = T;
-        using difference_type = int64_t;
-        using pointer = T*;
-        using reference = T&;
-
-        explicit PreOrderIterator(Node node = Node::null())
-            : node_{node}
-        {}
-
-        PreOrderIterator& operator++()
-        {
-            if (node_->preorder_next_)
-            {
-                node_ = node_->preorder_next_;
-            }
-            return *this;
-        }
-
-        PreOrderIterator& operator--()
-        {
-            if (node_->preorder_prev_)
-            {
-                node_ = node_->preorder_prev_;
-            }
-            return *this;
-        }
-
-        bool operator==(const PreOrderIterator& other) const { return (node_.get() == other.node_.get()); }
-        bool operator!=(const PreOrderIterator& other) const { return !(*this == other); }
-        const T& operator*() const { return node_->data_; }
-
-    private:
-        Node node_;
-    };
-
-    using RPreOrderIterator = ReverseIterator<PreOrderIterator>;
+    Node get_parent() const { return parent_; }
 
     template<class... Args>
-    explicit Tree(Args&&... args)
-        : root_{Node::null(), Node::null(), Node::null(), std::forward<Args>(args)...}
-        , first_{Node::null(), root_, Node::null(), std::forward<Args>(args)...}
-        , last_{Node::null(), Node::null(), root_, std::forward<Args>(args)...}
+    Node add_child(Args&&... args)
     {
-        root_->preorder_prev_ = first_;
-        root_->preorder_next_ = last_;
+      Node this_node = Node::from_shared(this->shared_from_this());
+      Node prev_node = this_node;
+      while (prev_node->youngest_child_) {
+        prev_node = prev_node->youngest_child_;
+      }
+      Node next_node = prev_node->preorder_next_;
+      youngest_child_ =
+        Node(this_node, prev_node, next_node, std::forward<Args>(args)...);
+      prev_node->preorder_next_ = youngest_child_;
+      next_node->preorder_prev_ = youngest_child_;
+      return youngest_child_;
     }
 
-    Node get_root() const
+    void add_child(Node node)
     {
-        return root_;
+      if (node) {
+        Node this_node = Node::from_shared(this->shared_from_this());
+        Node prev_node = this_node;
+        while (prev_node->youngest_child_) {
+          prev_node = prev_node->youngest_child_;
+        }
+        Node next_node = prev_node->preorder_next_;
+        Node last_node = node;
+        while (last_node->preorder_next_) {
+          last_node = last_node->preorder_next_;
+        }
+        node->parent_ = this_node;
+        youngest_child_ = node;
+        node->preorder_prev_ = prev_node;
+        last_node->preorder_next_ = next_node;
+        prev_node->preorder_next_ = node;
+        next_node->preorder_prev_ = last_node;
+      }
     }
 
-    void splice(Node & node, Tree & other)
-    {
-        node->preorder_next_->preorder_prev_ = other.last_->preorder_prev_;
-        other.last_->preorder_prev_->preorder_next_ = node->preorder_next_;
-        node->preorder_next_ = other.root_;
-        other.root_->preorder_prev_ = node;
-        other.root_ = Node::null();
-        other.first_ = Node::null();
-        other.last_ = Node::null();
-    }
-
-    PreOrderIterator begin_preorder() const { return PreOrderIterator(root_); }
-    PreOrderIterator end_preorder() const { return PreOrderIterator(last_); }
-    RPreOrderIterator rbegin_preorder() const { return RPreOrderIterator(last_->preorder_prev_); }
-    RPreOrderIterator rend_preorder() const { return RPreOrderIterator(first_); }
+  private:
+    const T data_;
+    Node const parent_;
+    Node youngest_child_;
+    Node preorder_prev_;
+    Node preorder_next_;
+  };
 
 private:
-    Node root_;
-    Node first_;
-    Node last_;
+  template<typename R>
+  class ReverseIterator
+  {
+  public:
+    using iterator_category = typename R::iterator_category;
+    using value_type = typename R::value_type;
+    using difference_type = typename R::difference_type;
+    using pointer = typename R::pointer;
+    using reference = typename R::reference;
+
+    template<class... Args>
+    explicit ReverseIterator(Args... args)
+      : normal_it_{ std::forward<Args>(args)... }
+    {}
+
+    ReverseIterator& operator++()
+    {
+      --normal_it_;
+      return *this;
+    }
+    ReverseIterator& operator--()
+    {
+      ++normal_it_;
+      return *this;
+    }
+    bool operator==(const ReverseIterator& other) const
+    {
+      return (normal_it_ == other.normal_it_);
+    }
+    bool operator!=(const ReverseIterator& other) const
+    {
+      return (normal_it_ != other.normal_it_);
+    }
+    const value_type& operator*() const { return *normal_it_; }
+
+  private:
+    R normal_it_;
+  };
+
+public:
+  class PreOrderIterator
+  {
+    friend Tree;
+
+  public:
+    using iterator_category = std::bidirectional_iterator_tag;
+    using value_type = T;
+    using difference_type = int64_t;
+    using pointer = T*;
+    using reference = T&;
+
+    explicit PreOrderIterator(Node node = Node::null())
+      : node_{ node }
+    {}
+
+    PreOrderIterator& operator++()
+    {
+      if (node_->preorder_next_) {
+        node_ = node_->preorder_next_;
+      }
+      return *this;
+    }
+
+    PreOrderIterator& operator--()
+    {
+      if (node_->preorder_prev_) {
+        node_ = node_->preorder_prev_;
+      }
+      return *this;
+    }
+
+    bool operator==(const PreOrderIterator& other) const
+    {
+      return (node_.get() == other.node_.get());
+    }
+    bool operator!=(const PreOrderIterator& other) const
+    {
+      return !(*this == other);
+    }
+    const T& operator*() const { return node_->data_; }
+
+  private:
+    Node node_;
+  };
+
+  using RPreOrderIterator = ReverseIterator<PreOrderIterator>;
+
+  template<class... Args>
+  explicit Tree(Args&&... args)
+    : root_{ Node::null(),
+             Node::null(),
+             Node::null(),
+             std::forward<Args>(args)... }
+    , first_{ Node::null(), root_, Node::null(), std::forward<Args>(args)... }
+    , last_{ Node::null(), Node::null(), root_, std::forward<Args>(args)... }
+  {
+    root_->preorder_prev_ = first_;
+    root_->preorder_next_ = last_;
+  }
+
+  Node get_root() const { return root_; }
+
+  void splice(Node& node, Tree& other)
+  {
+    node->preorder_next_->preorder_prev_ = other.last_->preorder_prev_;
+    other.last_->preorder_prev_->preorder_next_ = node->preorder_next_;
+    node->preorder_next_ = other.root_;
+    other.root_->preorder_prev_ = node;
+    other.root_ = Node::null();
+    other.first_ = Node::null();
+    other.last_ = Node::null();
+  }
+
+  PreOrderIterator begin_preorder() const { return PreOrderIterator(root_); }
+  PreOrderIterator end_preorder() const { return PreOrderIterator(last_); }
+  RPreOrderIterator rbegin_preorder() const
+  {
+    return RPreOrderIterator(last_->preorder_prev_);
+  }
+  RPreOrderIterator rend_preorder() const { return RPreOrderIterator(first_); }
+
+private:
+  Node root_;
+  Node first_;
+  Node last_;
 };
 
 } // namespace cpputils
