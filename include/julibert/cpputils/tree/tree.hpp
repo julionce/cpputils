@@ -28,7 +28,6 @@
 #include <vector>
 
 namespace julibert {
-namespace cpputils {
 namespace tree {
 
 template<typename T>
@@ -72,12 +71,12 @@ public:
   }
 
 private:
-  Node(Reference<Impl> const& impl)
+  Node(cpputils::Reference<Impl> const& impl)
     : impl_{ impl }
   {}
 
 private:
-  Reference<Impl> impl_;
+  cpputils::Reference<Impl> impl_;
 };
 
 template<typename T>
@@ -113,8 +112,6 @@ postorder_list(Node<T> const& root)
 }
 
 } // namespace tree
-
-} // namespace cpputils
 } // namespace julibert
 
 #endif // JULIBERT_CPPUTILS_TREE_TREE_HPP_

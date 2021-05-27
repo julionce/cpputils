@@ -39,7 +39,7 @@ private:
   double b_;
 };
 
-using namespace julibert::cpputils;
+using namespace julibert;
 
 SCENARIO("tree::Node")
 {
