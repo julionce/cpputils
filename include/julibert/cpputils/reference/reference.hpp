@@ -53,8 +53,6 @@ public:
     return *this;
   };
 
-  operator bool() const;
-
   T* get();
 
   const T* get() const;
@@ -91,12 +89,6 @@ template<typename T>
 inline Reference<T>::Reference(void*)
   : impl_{ nullptr }
 {}
-
-template<typename T>
-inline Reference<T>::operator bool() const
-{
-  return bool(impl_);
-}
 
 template<typename T>
 inline T*
@@ -137,13 +129,7 @@ template<typename R>
 inline bool
 operator==(Reference<R> const& lhs, Reference<R> const& rhs)
 {
-  bool rv = false;
-  if (!lhs || !rhs) {
-    rv = !lhs && !rhs;
-  } else {
-    rv = (lhs.impl_.get() == rhs.impl_.get()) ? true : *lhs.impl_ == *rhs.impl_;
-  }
-  return rv;
+  return (lhs.impl_.get() == rhs.impl_.get()) ? true : *lhs.impl_ == *rhs.impl_;
 }
 
 template<typename R>

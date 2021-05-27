@@ -53,12 +53,10 @@ SCENARIO("Reference")
   GIVEN("a Reference")
   {
     MyReference foo(11, 89);
-    REQUIRE(foo);
 
     THEN("it can be assigned from a prvalue")
     {
       MyReference foo = MyReference();
-      REQUIRE(foo);
       REQUIRE(0 == foo->get_foo());
       REQUIRE(0 == foo->get_bar());
     }
@@ -66,13 +64,10 @@ SCENARIO("Reference")
     THEN("it can be assigned from a lvalue")
     {
       MyReference bar(1, 1);
-      REQUIRE(bar);
       REQUIRE(1 == bar->get_foo());
       REQUIRE(1 == bar->get_bar());
 
       foo = bar;
-      REQUIRE(bar);
-      REQUIRE(foo);
       REQUIRE(1 == foo->get_foo());
       REQUIRE(1 == foo->get_bar());
     }
@@ -82,7 +77,6 @@ SCENARIO("Reference")
       MyReference bar(11, 89);
 
       foo = std::move(bar);
-      REQUIRE_FALSE(bar);
     }
 
     THEN("it can by cloned")
@@ -98,7 +92,6 @@ SCENARIO("Reference")
     THEN("we can generate another from this one")
     {
       MyReference bar(foo);
-      REQUIRE(foo);
       REQUIRE(11 == bar->get_foo());
       REQUIRE(89 == bar->get_bar());
 
@@ -109,7 +102,6 @@ SCENARIO("Reference")
     THEN("we can generate a constant Rerence copying this one")
     {
       const MyReference bar(foo);
-      REQUIRE(bar);
       REQUIRE(11 == bar->get_foo());
       REQUIRE(89 == bar->get_bar());
 
@@ -120,8 +112,6 @@ SCENARIO("Reference")
     THEN("we can generate a constant Reference moving this one")
     {
       const MyReference bar(std::move(foo));
-      REQUIRE_FALSE(foo);
-      REQUIRE(bar);
     }
   }
 
