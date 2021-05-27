@@ -77,8 +77,6 @@ public:
 
   static Reference<T> clone(const Reference<T>& other);
 
-  static Reference<T> from_shared(const std::shared_ptr<T>& ptr);
-
 private:
   Reference(void*);
 
@@ -175,15 +173,6 @@ Reference<T>::clone(const Reference<T>& other)
   } else {
     rv.impl_.reset();
   }
-  return rv;
-}
-
-template<typename T>
-inline Reference<T>
-Reference<T>::from_shared(const std::shared_ptr<T>& ptr)
-{
-  Reference<T> rv = Reference<T>::null();
-  rv.impl_ = ptr;
   return rv;
 }
 
