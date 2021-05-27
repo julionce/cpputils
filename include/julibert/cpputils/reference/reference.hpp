@@ -24,7 +24,6 @@
 #include <utility>
 
 namespace julibert {
-namespace cpputils {
 
 template<typename T>
 class Reference
@@ -65,15 +64,15 @@ public:
   const T* operator->() const;
 
   template<typename R>
-  friend bool operator==(const Reference<R>& lhs, const Reference<R>& rhs);
+  friend bool operator==(Reference<R> const& lhs, Reference<R> const& rhs);
 
   template<typename R>
-  friend bool operator!=(const Reference<R>& lhs, const Reference<R>& rhs);
+  friend bool operator!=(Reference<R> const& lhs, Reference<R> const& rhs);
 
   template<typename R>
   explicit operator R() const;
 
-  static Reference<T> clone(const Reference<T>& other);
+  static Reference<T> clone(Reference<T> const& other);
 
 private:
   Reference(void*);
@@ -136,7 +135,7 @@ inline Reference<T>::operator R() const
 
 template<typename R>
 inline bool
-operator==(const Reference<R>& lhs, const Reference<R>& rhs)
+operator==(Reference<R> const& lhs, Reference<R> const& rhs)
 {
   bool rv = false;
   if (!lhs || !rhs) {
@@ -149,14 +148,14 @@ operator==(const Reference<R>& lhs, const Reference<R>& rhs)
 
 template<typename R>
 inline bool
-operator!=(const Reference<R>& lhs, const Reference<R>& rhs)
+operator!=(Reference<R> const& lhs, Reference<R> const& rhs)
 {
   return !(lhs == rhs);
 }
 
 template<typename T>
 inline Reference<T>
-Reference<T>::clone(const Reference<T>& other)
+Reference<T>::clone(Reference<T> const& other)
 {
   Reference<T> rv = Reference<T>(static_cast<void*>(nullptr));
   if (other.impl_) {
@@ -167,7 +166,6 @@ Reference<T>::clone(const Reference<T>& other)
   return rv;
 }
 
-} // namespace cpputils
 } // namespace julibert
 
 #endif // JULIBERT_CPPUTILS_REFERENCE_REFERENCE_HPP_

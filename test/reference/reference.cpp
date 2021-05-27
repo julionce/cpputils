@@ -46,7 +46,7 @@ private:
   uint8_t bar_ = 0;
 };
 
-using MyReference = julibert::cpputils::Reference<MyReferenceImpl>;
+using MyReference = julibert::Reference<MyReferenceImpl>;
 
 SCENARIO("Reference")
 {

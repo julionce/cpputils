@@ -71,12 +71,12 @@ public:
   }
 
 private:
-  Node(cpputils::Reference<Impl> const& impl)
+  Node(Reference<Impl> const& impl)
     : impl_{ impl }
   {}
 
 private:
-  cpputils::Reference<Impl> impl_;
+  Reference<Impl> impl_;
 };
 
 template<typename T>
