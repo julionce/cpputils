@@ -73,8 +73,6 @@ public:
   template<typename R>
   explicit operator R() const;
 
-  static Reference<T> null();
-
   static Reference<T> clone(const Reference<T>& other);
 
 private:
@@ -158,18 +156,11 @@ operator!=(const Reference<R>& lhs, const Reference<R>& rhs)
 
 template<typename T>
 inline Reference<T>
-Reference<T>::null()
-{
-  return Reference<T>(static_cast<void*>(nullptr));
-}
-
-template<typename T>
-inline Reference<T>
 Reference<T>::clone(const Reference<T>& other)
 {
-  Reference<T> rv = Reference<T>::null();
+  Reference<T> rv = Reference<T>(static_cast<void*>(nullptr));
   if (other.impl_) {
-    rv.impl_ = std::shared_ptr<T>(new T(*other.impl_.get()));
+    rv.impl_ = std::make_shared<T>(*other.impl_.get());
   } else {
     rv.impl_.reset();
   }

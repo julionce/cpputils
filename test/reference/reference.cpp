@@ -50,13 +50,6 @@ using MyReference = julibert::cpputils::Reference<MyReferenceImpl>;
 
 SCENARIO("Reference")
 {
-  GIVEN("a null Reference")
-  {
-    MyReference foo = MyReference::null();
-
-    THEN("bool() operator shall return true") { REQUIRE_FALSE(foo); }
-  }
-
   GIVEN("a Reference")
   {
     MyReference foo(11, 89);
@@ -152,18 +145,6 @@ SCENARIO("Reference operator==")
 {
   GIVEN("two References")
   {
-    WHEN("both are null")
-    {
-      MyReference foo = MyReference::null();
-      MyReference bar = MyReference::null();
-
-      THEN("operator== shall return true")
-      {
-        REQUIRE(foo == bar);
-        REQUIRE_FALSE(foo != bar);
-      }
-    }
-
     WHEN("one is a copy of the other")
     {
       MyReference foo(11, 89);
