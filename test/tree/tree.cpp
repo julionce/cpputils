@@ -48,22 +48,23 @@ SCENARIO("tree::Node")
   {
     Node root{ 'F' };
 
+    THEN("it shall not have parent") { REQUIRE_FALSE(root.parent()); }
+
     WHEN("children are added")
     {
-      Node b_node = root->add_child('B');
-      Node a_node = b_node->add_child('A');
-      Node d_node = b_node->add_child('D');
-      Node c_node = d_node->add_child('C');
-      REQUIRE(d_node->import_node_as_child(Node{ 'E' }));
-      Node g_node = root->add_child('G');
-      Node i_node = g_node->add_child('I');
-      Node h_node{ 'H' };
-      REQUIRE(i_node->import_node_as_child(h_node));
+      auto b_node = root.add_child('B');
+      auto a_node = b_node.add_child('A');
+      auto d_node = b_node.add_child('D');
+      auto c_node = d_node.add_child('C');
+      auto e_node = d_node.add_child('E');
+      auto g_node = root.add_child('G');
+      auto i_node = g_node.add_child('I');
+      auto h_node = i_node.add_child('H');
 
       THEN("the parent of its children shall be itseft")
       {
-        REQUIRE(b_node->get_parent() == root);
-        REQUIRE(a_node->get_parent() == b_node);
+        REQUIRE(b_node.parent().value() == root);
+        REQUIRE(a_node.parent().value() == b_node);
       }
 
       THEN("we shall be able to visit in pre-order and post-order")
@@ -75,7 +76,7 @@ SCENARIO("tree::Node")
                                               'H', 'I', 'G', 'F' };
 
         auto push_result = [&result](tree::Node<char> const& node) {
-          result.push_back(node->data());
+          result.push_back(node.data());
         };
 
         std::list<Node> preorder_list = tree::preorder_list(root);

@@ -24,6 +24,7 @@
 #include <cstdint>
 #include <functional>
 #include <list>
+#include <optional>
 #include <vector>
 
 namespace julibert {
@@ -31,70 +32,53 @@ namespace cpputils {
 namespace tree {
 
 template<typename T>
-class NodeImpl;
-
-template<typename T>
-using Node = Reference<NodeImpl<T>>;
-
-template<typename T>
-class NodeImpl : public std::enable_shared_from_this<NodeImpl<T>>
+class Node
 {
+  struct Impl
+  {
+    template<typename... Args>
+    explicit Impl(Args&&... args)
+      : data{ std::forward<Args>(args)... }
+    {}
+
+    T data;
+    std::optional<Node> parent = {};
+    std::vector<Node> children = {};
+  };
+
 public:
-  template<class... Args>
-  explicit NodeImpl(Args&&... args);
+  template<typename... Args>
+  explicit Node(Args&&... args)
+    : impl_{ std::forward<Args>(args)... }
+  {}
 
-  Node<T> const& get_parent() const { return parent_; }
-  std::vector<Node<T>> const& get_children() const { return children_; }
+  std::optional<Node> parent() const { return impl_->parent; }
+  std::vector<Node> const& children() const { return impl_->children; }
 
-  template<class... Args>
-  Node<T> const& add_child(Args&&... args);
+  template<typename... Args>
+  Node add_child(Args&&... args)
+  {
+    impl_->children.emplace_back(std::forward<Args>(args)...);
+    impl_->children.back().impl_->parent = Node(this->impl_);
+    return impl_->children.back();
+  }
 
-  template<class R>
-  bool import_node_as_child(R&& child_node);
+  T const& data() const { return impl_->data; }
+  T& data() { return impl_->data; }
 
-  T const& data() const { return data_; }
-  T& data() { return data_; }
-
-  bool operator==(const NodeImpl& other) const { return this == &other; }
+  bool operator==(Node const& other) const
+  {
+    return &impl_->data == &other.impl_->data;
+  }
 
 private:
-  T data_;
-  Node<T> parent_;
-  std::vector<Node<T>> children_;
+  Node(Reference<Impl> const& impl)
+    : impl_{ impl }
+  {}
+
+private:
+  Reference<Impl> impl_;
 };
-
-template<typename T>
-template<class... Args>
-inline NodeImpl<T>::NodeImpl(Args&&... args)
-  : data_{ std::forward<Args>(args)... }
-  , parent_{ Node<T>::null() }
-  , children_{}
-{}
-
-template<typename T>
-template<class... Args>
-inline Node<T> const&
-NodeImpl<T>::add_child(Args&&... args)
-{
-  children_.emplace_back(std::forward<Args>(args)...);
-  children_.back()->parent_ = Node<T>::from_shared(this->shared_from_this());
-  return children_.back();
-}
-
-template<class T>
-template<class R>
-inline bool
-NodeImpl<T>::import_node_as_child(R&& child_node)
-{
-  bool rv = false;
-  NodeImpl* node_ptr = std::forward<Node<T>>(child_node).get();
-  if (!node_ptr->parent_) {
-    node_ptr->parent_ = Node<T>::from_shared(this->shared_from_this());
-    children_.push_back(std::forward<Node<T>>(child_node));
-    rv = true;
-  }
-  return rv;
-}
 
 template<typename T>
 std::list<Node<T>>
@@ -104,7 +88,7 @@ preorder_list(Node<T> const& root)
   std::function<void(Node<T> const&)> push_node;
   push_node = [&nodes, &push_node](Node<T> const& node) {
     nodes.push_back(node);
-    for (auto& n : node->get_children()) {
+    for (auto& n : node.children()) {
       push_node(n);
     }
   };
@@ -119,7 +103,7 @@ postorder_list(Node<T> const& root)
   std::list<Node<T>> nodes;
   std::function<void(Node<T> const&)> push_node;
   push_node = [&nodes, &push_node](Node<T> const& node) {
-    for (auto& n : node->get_children()) {
+    for (auto& n : node.children()) {
       push_node(n);
     }
     nodes.push_back(node);
