@@ -30,18 +30,20 @@ class Reference
 {
 public:
   template<class... Args>
-  explicit Reference(Args&&... args);
+  explicit Reference(Args&&... args)
+    : impl_{ std::make_shared<T>(args...) }
+  {}
 
   virtual ~Reference() = default;
 
-  Reference(Reference&& other) = default;
+  Reference(Reference&& other) = delete;
   Reference(Reference& other) noexcept
     : impl_{ other.impl_ }
   {}
   Reference(Reference const& other) noexcept
     : impl_{ other.impl_ }
   {}
-  Reference& operator=(Reference&& other) = default;
+  Reference& operator=(Reference&& other) = delete;
   Reference& operator=(Reference& other) noexcept
   {
     impl_ = other.impl_;
@@ -73,22 +75,13 @@ public:
   static Reference<T> clone(Reference<T> const& other);
 
 private:
-  Reference(void*);
+  Reference(void*)
+    : impl_{ nullptr }
+  {}
 
 protected:
   std::shared_ptr<T> impl_;
 };
-
-template<typename T>
-template<class... Args>
-inline Reference<T>::Reference(Args&&... args)
-  : impl_{ std::make_shared<T>(args...) }
-{}
-
-template<typename T>
-inline Reference<T>::Reference(void*)
-  : impl_{ nullptr }
-{}
 
 template<typename T>
 inline T*

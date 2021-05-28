@@ -58,7 +58,7 @@ public:
   Node add_child(Args&&... args)
   {
     impl_->children.emplace_back(std::forward<Args>(args)...);
-    impl_->children.back().impl_->parent = Node(this->impl_);
+    impl_->children.back().impl_->parent = const_cast<Node const&>(*this);
     return impl_->children.back();
   }
 
@@ -69,11 +69,6 @@ public:
   {
     return &impl_->data == &other.impl_->data;
   }
-
-private:
-  Node(Reference<Impl> const& impl)
-    : impl_{ impl }
-  {}
 
 private:
   Reference<Impl> impl_;

@@ -72,13 +72,6 @@ SCENARIO("Reference")
       REQUIRE(1 == foo->get_bar());
     }
 
-    THEN("it can be assigned from an xvalue")
-    {
-      MyReference bar(11, 89);
-
-      foo = std::move(bar);
-    }
-
     THEN("it can by cloned")
     {
       MyReference bar(MyReference::clone(foo));
@@ -107,11 +100,6 @@ SCENARIO("Reference")
 
       foo->set_foo(12);
       REQUIRE(12 == bar->get_foo());
-    }
-
-    THEN("we can generate a constant Reference moving this one")
-    {
-      const MyReference bar(std::move(foo));
     }
   }
 
