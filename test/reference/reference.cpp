@@ -101,6 +101,14 @@ SCENARIO("Reference")
       foo->set_foo(12);
       REQUIRE(12 == bar->get_foo());
     }
+
+    THEN("the get methods shall return references to the underlying type")
+    {
+      const MyReference bar(foo);
+      MyReferenceImpl& foo_ref = foo.get();
+      // MyReferenceImpl& bar_ref = bar.get(); // It would give an error.
+      MyReferenceImpl const& bar_ref = bar.get();
+    }
   }
 
   GIVEN(

@@ -55,9 +55,9 @@ public:
     return *this;
   };
 
-  T* get();
+  T& get() { return *impl_.get(); }
 
-  const T* get() const;
+  T const& get() const { return *impl_.get(); }
 
   T* operator->();
 
@@ -82,20 +82,6 @@ private:
 protected:
   std::shared_ptr<T> impl_;
 };
-
-template<typename T>
-inline T*
-Reference<T>::get()
-{
-  return this->impl_.get();
-}
-
-template<typename T>
-inline const T*
-Reference<T>::get() const
-{
-  return this->impl_.get();
-}
 
 template<typename T>
 inline T*
