@@ -37,9 +37,9 @@ public:
     return (lhs.foo_ == rhs.foo_) && (lhs.bar_ == rhs.bar_);
   }
 
-  void set_foo(uint8_t foo) { foo_ = foo; }
-  uint8_t get_foo() const { return foo_; }
-  uint8_t get_bar() const { return bar_; }
+  void foo(uint8_t foo) { foo_ = foo; }
+  uint8_t foo() const { return foo_; }
+  uint8_t bar() const { return bar_; }
 
 private:
   uint8_t foo_ = 0;
@@ -57,49 +57,50 @@ SCENARIO("Reference")
     THEN("it can be assigned from a prvalue")
     {
       MyReference foo = MyReference();
-      REQUIRE(0 == foo->get_foo());
-      REQUIRE(0 == foo->get_bar());
+      REQUIRE(0 == foo->foo());
+      REQUIRE(0 == foo->bar());
     }
 
     THEN("it can be assigned from a lvalue")
     {
       MyReference bar(1, 1);
-      REQUIRE(1 == bar->get_foo());
-      REQUIRE(1 == bar->get_bar());
+      REQUIRE(1 == bar->foo());
+      REQUIRE(1 == bar->bar());
 
       foo = bar;
-      REQUIRE(1 == foo->get_foo());
-      REQUIRE(1 == foo->get_bar());
+      REQUIRE(1 == foo->foo());
+      REQUIRE(1 == foo->bar());
     }
 
     THEN("it can by cloned")
     {
       MyReference bar(MyReference::clone(foo));
-      REQUIRE(11 == bar->get_foo());
-      REQUIRE(89 == bar->get_bar());
+      REQUIRE(11 == bar->foo());
+      REQUIRE(89 == bar->bar());
 
-      foo->set_foo(0);
-      REQUIRE(11 == bar->get_foo());
+      foo->foo(0);
+      REQUIRE(11 == bar->foo());
+      REQUIRE(0 == foo->foo());
     }
 
     THEN("we can generate another from this one")
     {
       MyReference bar(foo);
-      REQUIRE(11 == bar->get_foo());
-      REQUIRE(89 == bar->get_bar());
+      REQUIRE(11 == bar->foo());
+      REQUIRE(89 == bar->bar());
 
-      foo->set_foo(0);
-      REQUIRE(0 == bar->get_foo());
+      foo->foo(0);
+      REQUIRE(0 == bar->foo());
     }
 
     THEN("we can generate a constant Rerence copying this one")
     {
       const MyReference bar(foo);
-      REQUIRE(11 == bar->get_foo());
-      REQUIRE(89 == bar->get_bar());
+      REQUIRE(11 == bar->foo());
+      REQUIRE(89 == bar->bar());
 
-      foo->set_foo(12);
-      REQUIRE(12 == bar->get_foo());
+      foo->foo(12);
+      REQUIRE(12 == bar->foo());
     }
 
     THEN("the get methods shall return references to the underlying type")
@@ -116,14 +117,14 @@ SCENARIO("Reference")
   {
     const MyReference foo(11, 89);
     // foo->set_foo(11); // It would give an error.
-    REQUIRE(11 == foo->get_foo());
+    REQUIRE(11 == foo->foo());
   }
 
   GIVEN("a Reference, its implementation methods are available")
   {
     MyReference foo(0, 0);
-    foo->set_foo(11);
-    REQUIRE(11 == foo->get_foo());
+    foo->foo(11);
+    REQUIRE(11 == foo->foo());
   }
 }
 

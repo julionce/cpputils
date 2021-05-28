@@ -59,77 +59,42 @@ public:
 
   T const& get() const { return *impl_.get(); }
 
-  T* operator->();
+  T* operator->() { return impl_.get(); }
 
-  const T* operator->() const;
-
-  template<typename R>
-  friend bool operator==(Reference<R> const& lhs, Reference<R> const& rhs);
+  T const* operator->() const { return impl_.get(); }
 
   template<typename R>
-  friend bool operator!=(Reference<R> const& lhs, Reference<R> const& rhs);
+  friend bool operator==(Reference<R> const& lhs, Reference<R> const& rhs)
+  {
+    return (lhs.impl_.get() == rhs.impl_.get()) ? true
+                                                : *lhs.impl_ == *rhs.impl_;
+  }
 
   template<typename R>
-  explicit operator R() const;
+  friend bool operator!=(Reference<R> const& lhs, Reference<R> const& rhs)
+  {
+    return !(lhs == rhs);
+  }
 
-  static Reference<T> clone(Reference<T> const& other);
+  template<typename R>
+  explicit operator R() const
+  {
+    return impl_->operator R();
+  }
+
+  static Reference<T> clone(Reference<T> const& other)
+  {
+    return Reference<T>(std::make_shared<T>(*other.impl_.get()));
+  }
 
 private:
-  Reference(void*)
-    : impl_{ nullptr }
+  Reference(std::shared_ptr<T>&& impl)
+    : impl_{ impl }
   {}
 
 protected:
   std::shared_ptr<T> impl_;
 };
-
-template<typename T>
-inline T*
-Reference<T>::operator->()
-{
-  return this->impl_.get();
-}
-
-template<typename T>
-inline const T*
-Reference<T>::operator->() const
-{
-  return this->impl_.get();
-}
-
-template<typename T>
-template<typename R>
-inline Reference<T>::operator R() const
-{
-  return impl_->operator R();
-}
-
-template<typename R>
-inline bool
-operator==(Reference<R> const& lhs, Reference<R> const& rhs)
-{
-  return (lhs.impl_.get() == rhs.impl_.get()) ? true : *lhs.impl_ == *rhs.impl_;
-}
-
-template<typename R>
-inline bool
-operator!=(Reference<R> const& lhs, Reference<R> const& rhs)
-{
-  return !(lhs == rhs);
-}
-
-template<typename T>
-inline Reference<T>
-Reference<T>::clone(Reference<T> const& other)
-{
-  Reference<T> rv = Reference<T>(static_cast<void*>(nullptr));
-  if (other.impl_) {
-    rv.impl_ = std::make_shared<T>(*other.impl_.get());
-  } else {
-    rv.impl_.reset();
-  }
-  return rv;
-}
 
 } // namespace julibert
 
