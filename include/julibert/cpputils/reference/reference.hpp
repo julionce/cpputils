@@ -29,31 +29,16 @@ template<typename T>
 class Reference
 {
 public:
-  template<class... Args>
-  explicit Reference(Args&&... args)
+  template<typename... Args,
+           std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = true>
+  explicit Reference(std::in_place_t, Args&&... args)
     : impl_{ std::make_shared<T>(args...) }
   {}
 
-  virtual ~Reference() = default;
-
-  Reference(Reference&& other) = delete;
-  Reference(Reference& other) noexcept
-    : impl_{ other.impl_ }
-  {}
-  Reference(Reference const& other) noexcept
-    : impl_{ other.impl_ }
-  {}
-  Reference& operator=(Reference&& other) = delete;
-  Reference& operator=(Reference& other) noexcept
-  {
-    impl_ = other.impl_;
-    return *this;
-  };
-  Reference& operator=(Reference const& other) noexcept
-  {
-    impl_ = other.impl_;
-    return *this;
-  };
+  Reference(Reference&&) = delete;
+  Reference(Reference const&) = default;
+  Reference& operator=(Reference&&) = delete;
+  Reference& operator=(Reference const&) = default;
 
   T& get() { return *impl_.get(); }
 

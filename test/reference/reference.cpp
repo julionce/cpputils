@@ -52,18 +52,18 @@ SCENARIO("Reference")
 {
   GIVEN("a Reference")
   {
-    MyReference foo(11, 89);
+    MyReference foo(std::in_place, 11, 89);
 
     THEN("it can be assigned from a prvalue")
     {
-      MyReference foo = MyReference();
+      MyReference foo = MyReference(std::in_place);
       REQUIRE(0 == foo->foo());
       REQUIRE(0 == foo->bar());
     }
 
     THEN("it can be assigned from a lvalue")
     {
-      MyReference bar(1, 1);
+      MyReference bar(std::in_place, 1, 1);
       REQUIRE(1 == bar->foo());
       REQUIRE(1 == bar->bar());
 
@@ -115,14 +115,14 @@ SCENARIO("Reference")
   GIVEN(
     "a constant Reference, its constant implementation methods are available")
   {
-    const MyReference foo(11, 89);
+    const MyReference foo(std::in_place, 11, 89);
     // foo->set_foo(11); // It would give an error.
     REQUIRE(11 == foo->foo());
   }
 
   GIVEN("a Reference, its implementation methods are available")
   {
-    MyReference foo(0, 0);
+    MyReference foo(std::in_place, 0, 0);
     foo->foo(11);
     REQUIRE(11 == foo->foo());
   }
@@ -134,7 +134,7 @@ SCENARIO("Reference operator==")
   {
     WHEN("one is a copy of the other")
     {
-      MyReference foo(11, 89);
+      MyReference foo(std::in_place, 11, 89);
       MyReference bar(foo);
 
       THEN("operator== shall return true")
@@ -148,16 +148,16 @@ SCENARIO("Reference operator==")
     {
       THEN("if they are equal the operator== shall return true")
       {
-        MyReference foo(11, 89);
-        MyReference bar(11, 89);
+        MyReference foo(std::in_place, 11, 89);
+        MyReference bar(std::in_place, 11, 89);
         REQUIRE(foo == bar);
         REQUIRE_FALSE(foo != bar);
       }
 
       THEN("if they are different the operator== shall return false")
       {
-        MyReference foo(11, 89);
-        MyReference bar(11, 79);
+        MyReference foo(std::in_place, 11, 89);
+        MyReference bar(std::in_place, 11, 79);
         REQUIRE_FALSE(foo == bar);
         REQUIRE(foo != bar);
       }
