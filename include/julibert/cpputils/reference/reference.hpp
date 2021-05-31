@@ -48,15 +48,13 @@ public:
 
   T const* operator->() const { return impl_.get(); }
 
-  template<typename R>
-  friend bool operator==(Reference<R> const& lhs, Reference<R> const& rhs)
+  friend bool operator==(Reference<T> const& lhs, Reference<T> const& rhs)
   {
     return (lhs.impl_.get() == rhs.impl_.get()) ? true
                                                 : *lhs.impl_ == *rhs.impl_;
   }
 
-  template<typename R>
-  friend bool operator!=(Reference<R> const& lhs, Reference<R> const& rhs)
+  friend bool operator!=(Reference<T> const& lhs, Reference<T> const& rhs)
   {
     return !(lhs == rhs);
   }
