@@ -34,7 +34,7 @@ class Reference
 public:
   template<typename... Args,
            std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = true>
-  explicit Reference(std::in_place_t, Args&&... args)
+  explicit Reference(Args&&... args)
     : impl_{ std::make_shared<T>(args...) }
   {}
 
@@ -64,7 +64,7 @@ public:
 
   template<typename R,
            std::enable_if_t<!std::is_same_v<std::decay_t<T>, std::decay_t<R>> &&
-                              (std::is_convertible_v<T, R>),
+                              std::is_convertible_v<T, R>,
                             bool> = true>
   explicit operator Reference<R>() const
   {

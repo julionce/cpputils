@@ -48,7 +48,7 @@ class Node
 public:
   template<typename... Args>
   explicit Node(Args&&... args)
-    : impl_{ std::in_place, std::forward<Args>(args)... }
+    : impl_{ std::forward<Args>(args)... }
   {}
 
   std::optional<Node> parent() const { return impl_->parent; }
