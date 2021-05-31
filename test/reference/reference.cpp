@@ -164,3 +164,31 @@ SCENARIO("Reference operator==")
     }
   }
 }
+
+struct ReferenceBaseImpl
+{
+  ReferenceBaseImpl() = default;
+  int foo;
+};
+
+using ReferenceBase = julibert::Reference<ReferenceBaseImpl>;
+
+struct ReferenceDerivedImpl : ReferenceBaseImpl
+{
+  ReferenceDerivedImpl() = default;
+  int bar;
+};
+
+using ReferenceDerived = julibert::Reference<ReferenceDerivedImpl>;
+
+SCENARIO("Reference conversion")
+{
+  GIVEN("a Reference derived")
+  {
+    ReferenceDerived derived(std::in_place);
+    THEN("it can be converted to Reference base")
+    {
+      ReferenceBase base = static_cast<ReferenceBase>(derived);
+    }
+  }
+}

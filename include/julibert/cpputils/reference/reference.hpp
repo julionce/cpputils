@@ -28,6 +28,9 @@ namespace julibert {
 template<typename T>
 class Reference
 {
+  template<typename>
+  friend class Reference;
+
 public:
   template<typename... Args,
            std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = true>
@@ -59,10 +62,13 @@ public:
     return !(lhs == rhs);
   }
 
-  template<typename R>
-  explicit operator R() const
+  template<typename R,
+           std::enable_if_t<!std::is_same_v<std::decay_t<T>, std::decay_t<R>> &&
+                              (std::is_convertible_v<T, R>),
+                            bool> = true>
+  explicit operator Reference<R>() const
   {
-    return impl_->operator R();
+    return Reference<R>(std::static_pointer_cast<R>(impl_));
   }
 
   static Reference<T> clone(Reference<T> const& other)
