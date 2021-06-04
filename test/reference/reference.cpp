@@ -192,3 +192,10 @@ SCENARIO("Reference conversion")
     }
   }
 }
+
+using StringRef = julibert::Reference<std::string>;
+
+SCENARIO("Reference initializer_list constructor")
+{
+  StringRef my_string_ref{ 'a', 'b', 'c', 'd' };
+}

@@ -38,6 +38,14 @@ public:
     : impl_{ std::make_shared<T>(args...) }
   {}
 
+  template<
+    typename U,
+    std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>&>,
+                     bool> = true>
+  explicit Reference(std::initializer_list<U> ilist)
+    : impl_{ std::make_shared<T>(T(ilist)) }
+  {}
+
   Reference(Reference&&) = delete;
   Reference(Reference const&) = default;
   Reference& operator=(Reference&&) = delete;
