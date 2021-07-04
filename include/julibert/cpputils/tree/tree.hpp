@@ -33,77 +33,75 @@ namespace tree {
 template<typename T>
 class Node
 {
-  struct Impl
-  {
-    template<typename... Args>
-    explicit Impl(Args&&... args)
-      : data{ std::forward<Args>(args)... }
-    {}
-
-    T data;
-    std::optional<Node> parent = {};
-    std::vector<Node> children = {};
-  };
+  using ReferenceType = std::reference_wrapper<Node<T>>;
+  using ChildrenType = std::list<Node<T>>;
 
 public:
   template<typename... Args>
   explicit Node(Args&&... args)
-    : impl_(std::forward<Args>(args)...)
+    : data_{ std::forward<Args>(args)... }
   {}
 
-  std::optional<Node> parent() const { return impl_->parent; }
-  std::vector<Node> const& children() const { return impl_->children; }
+  std::optional<ReferenceType> parent() const { return parent_; }
+  ChildrenType const& children() const { return children_; }
 
   template<typename... Args>
-  Node add_child(Args&&... args)
+  Node<T>& add_child(Args&&... args)
   {
-    impl_->children.emplace_back(std::forward<Args>(args)...);
-    impl_->children.back().impl_->parent = const_cast<Node const&>(*this);
-    return impl_->children.back();
+    children_.emplace_back(std::forward<Args>(args)...);
+    children_.back().parent_ = *this;
+    return children_.back();
   }
 
-  T const& data() const { return impl_->data; }
-  T& data() { return impl_->data; }
+  T const& data() const { return data_; }
+  T& data() { return data_; }
 
-  bool operator==(Node const& other) const
-  {
-    return &impl_->data == &other.impl_->data;
-  }
+  bool operator==(Node const& other) const { return &data_ == &other.data_; }
 
 private:
-  Reference<Impl> impl_;
+  T data_;
+  std::optional<ReferenceType> parent_;
+  ChildrenType children_;
 };
 
-template<typename T>
-std::list<Node<T>>
-preorder_list(Node<T> const& root)
+template<typename T, typename F>
+void
+for_each_in_preorder(Node<T>& node, F function)
 {
-  std::list<Node<T>> nodes;
-  std::function<void(Node<T> const&)> push_node;
-  push_node = [&nodes, &push_node](Node<T> const& node) {
-    nodes.push_back(node);
-    for (auto& n : node.children()) {
-      push_node(n);
-    }
-  };
-  push_node(root);
-  return nodes;
+  function(node);
+  for (auto&& n : node.children()) {
+    for_each_in_preorder(n, function);
+  }
 }
 
-template<typename T>
-std::list<Node<T>>
-postorder_list(Node<T> const& root)
+template<typename T, typename F>
+void
+for_each_in_preorder(Node<T> const& node, F function)
 {
-  std::list<Node<T>> nodes;
-  std::function<void(Node<T> const&)> push_node;
-  push_node = [&nodes, &push_node](Node<T> const& node) {
-    for (auto& n : node.children()) {
-      push_node(n);
-    }
-    nodes.push_back(node);
-  };
-  push_node(root);
-  return nodes;
+  function(node);
+  for (auto&& n : node.children()) {
+    for_each_in_preorder(n, function);
+  }
+}
+
+template<typename T, typename F>
+void
+for_each_in_postorder(Node<T>& node, F function)
+{
+  for (auto&& n : node.children()) {
+    for_each_in_postorder(n, function);
+  }
+  function(node);
+}
+
+template<typename T, typename F>
+void
+for_each_in_postorder(Node<T> const& node, F function)
+{
+  for (auto&& n : node.children()) {
+    for_each_in_postorder(n, function);
+  }
+  function(node);
 }
 
 } // namespace tree

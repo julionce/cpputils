@@ -52,19 +52,35 @@ SCENARIO("tree::Node")
 
     WHEN("children are added")
     {
-      auto b_node = root.add_child('B');
-      auto a_node = b_node.add_child('A');
-      auto d_node = b_node.add_child('D');
-      auto c_node = d_node.add_child('C');
-      auto e_node = d_node.add_child('E');
-      auto g_node = root.add_child('G');
-      auto i_node = g_node.add_child('I');
-      auto h_node = i_node.add_child('H');
+      //      auto b_node_ref = root.add_child('B');
+      //      auto a_node_ref = b_node_ref.get().add_child('A');
+      //      auto d_node_ref = b_node_ref.get().add_child('D');
+      //      auto c_node_ref = d_node_ref.get().add_child('C');
+      //      auto e_node_ref = d_node_ref.get().add_child('E');
+      //      auto g_node_ref = root.add_child('G');
+      //      auto i_node_ref = g_node_ref.get().add_child('I');
+      //      auto h_node_ref = i_node_ref.get().add_child('H');
+      //
+      //      THEN("the parent of its children shall be itseft")
+      //      {
+      //        REQUIRE(b_node_ref.get().parent().value().get() == root);
+      //        REQUIRE(a_node_ref.get().parent().value().get() ==
+      //        b_node_ref.get());
+      //      }
+
+      auto&& b_node = root.add_child('B');
+      auto&& a_node = b_node.add_child('A');
+      auto&& d_node = b_node.add_child('D');
+      auto&& c_node = d_node.add_child('C');
+      auto&& e_node = d_node.add_child('E');
+      auto&& g_node = root.add_child('G');
+      auto&& i_node = g_node.add_child('I');
+      auto&& h_node = i_node.add_child('H');
 
       THEN("the parent of its children shall be itseft")
       {
-        REQUIRE(b_node.parent().value() == root);
-        REQUIRE(a_node.parent().value() == b_node);
+        REQUIRE(b_node.parent().value().get() == root);
+        REQUIRE(a_node.parent().value().get() == b_node);
       }
 
       THEN("we shall be able to visit in pre-order and post-order")
@@ -75,19 +91,13 @@ SCENARIO("tree::Node")
         std::vector<char> expected_postorder{ 'A', 'C', 'E', 'D', 'B',
                                               'H', 'I', 'G', 'F' };
 
-        auto push_result = [&result](tree::Node<char> const& node) {
-          result.push_back(node.data());
-        };
-
-        std::list<Node> preorder_list = tree::preorder_list(root);
-        std::list<Node> postorder_list = tree::postorder_list(root);
-
-        std::for_each(preorder_list.begin(), preorder_list.end(), push_result);
+        tree::for_each_in_preorder(
+          root, [&result](auto&& item) { result.push_back(item.data()); });
         REQUIRE(result == expected_preorder);
 
         result.clear();
-        std::for_each(
-          postorder_list.begin(), postorder_list.end(), push_result);
+        tree::for_each_in_postorder(
+          root, [&result](auto&& item) { result.push_back(item.data()); });
         REQUIRE(result == expected_postorder);
       }
     }
