@@ -59,10 +59,14 @@ public:
 
   T const* operator->() const { return impl_.get(); }
 
+  friend bool operator<(Reference<T> const& lhs, Reference<T> const& rhs)
+  {
+    return *lhs.impl_ < *rhs.impl_;
+  }
+
   friend bool operator==(Reference<T> const& lhs, Reference<T> const& rhs)
   {
-    return (lhs.impl_.get() == rhs.impl_.get()) ? true
-                                                : *lhs.impl_ == *rhs.impl_;
+    return (lhs.impl_.get() == rhs.impl_.get()) || (*lhs.impl_ == *rhs.impl_);
   }
 
   friend bool operator!=(Reference<T> const& lhs, Reference<T> const& rhs)

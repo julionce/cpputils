@@ -32,7 +32,13 @@ public:
     , bar_{ bar }
   {}
 
-  friend bool operator==(const MyReferenceImpl& lhs, const MyReferenceImpl& rhs)
+  friend bool operator<(MyReferenceImpl const& lhs, MyReferenceImpl const& rhs)
+  {
+    return (lhs.foo_ < rhs.foo_) ||
+           ((lhs.foo_ == rhs.foo_) && (lhs.bar_ < rhs.bar_));
+  }
+
+  friend bool operator==(MyReferenceImpl const& lhs, MyReferenceImpl const& rhs)
   {
     return (lhs.foo_ == rhs.foo_) && (lhs.bar_ == rhs.bar_);
   }
@@ -125,6 +131,34 @@ SCENARIO("Reference")
     MyReference foo(0, 0);
     foo->foo(11);
     REQUIRE(11 == foo->foo());
+  }
+}
+
+SCENARIO("Reference operator<")
+{
+  GIVEN("two References foo and bar")
+  {
+    WHEN("foo is less than bar")
+    {
+      MyReference foo(0, 1);
+      MyReference bar(1, 0);
+      THEN("operator< shall return true")
+      {
+        REQUIRE(foo < bar);
+        REQUIRE_FALSE(bar < foo);
+      }
+    }
+
+    WHEN("foo is equal than bar")
+    {
+      MyReference foo(1, 2);
+      MyReference bar(1, 2);
+      THEN("operator< shall return false")
+      {
+        REQUIRE_FALSE(foo < bar);
+        REQUIRE_FALSE(bar < foo);
+      }
+    }
   }
 }
 
