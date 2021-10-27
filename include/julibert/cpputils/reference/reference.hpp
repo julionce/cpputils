@@ -51,13 +51,9 @@ public:
   Reference& operator=(Reference&&) = delete;
   Reference& operator=(Reference const&) = default;
 
-  T& get() { return *impl_.get(); }
+  T& get() const { return *impl_.get(); }
 
-  T const& get() const { return *impl_.get(); }
-
-  T* operator->() { return impl_.get(); }
-
-  T const* operator->() const { return impl_.get(); }
+  T* operator->() const { return impl_.get(); }
 
   friend bool operator<(Reference<T> const& lhs, Reference<T> const& rhs)
   {
@@ -74,13 +70,10 @@ public:
     return !(lhs == rhs);
   }
 
-  template<typename R,
-           std::enable_if_t<!std::is_same_v<std::decay_t<T>, std::decay_t<R>> &&
-                              std::is_convertible_v<T, R>,
-                            bool> = true>
+  template<typename R, typename = std::enable_if_t<std::is_convertible_v<T, R>>>
   explicit operator Reference<R>() const
   {
-    return Reference<R>(std::static_pointer_cast<R>(impl_));
+    return std::static_pointer_cast<R>(impl_);
   }
 
   static Reference<T> clone(Reference<T> const& other)

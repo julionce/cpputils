@@ -53,6 +53,7 @@ private:
 };
 
 using MyReference = julibert::Reference<MyReferenceImpl>;
+using MyConstReference = julibert::Reference<const MyReferenceImpl>;
 
 SCENARIO("Reference")
 {
@@ -99,9 +100,9 @@ SCENARIO("Reference")
       REQUIRE(0 == bar->foo());
     }
 
-    THEN("we can generate a constant Rerence copying this one")
+    THEN("we can generate a constant Reference copying this one")
     {
-      const MyReference bar(foo);
+      MyConstReference bar(foo);
       REQUIRE(11 == bar->foo());
       REQUIRE(89 == bar->bar());
 
@@ -118,12 +119,19 @@ SCENARIO("Reference")
     }
   }
 
-  GIVEN(
-    "a constant Reference, its constant implementation methods are available")
+  GIVEN("a constant Reference")
   {
-    const MyReference foo(11, 89);
-    // foo->set_foo(11); // It would give an error.
-    REQUIRE(11 == foo->foo());
+    THEN("its constant implementation methods are available")
+    {
+      MyConstReference foo(11, 89);
+      // foo->set_foo(11); // It would give an error.
+      REQUIRE(11 == foo->foo());
+    }
+
+    THEN("it is not possible to create a Reference")
+    {
+      REQUIRE_FALSE(std::is_convertible_v<MyConstReference, MyReference>);
+    }
   }
 
   GIVEN("a Reference, its implementation methods are available")
