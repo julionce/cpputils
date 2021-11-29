@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef JULIBERT_CPPUTILS_REFERENCE_REFERENCE_HPP_
-#define JULIBERT_CPPUTILS_REFERENCE_REFERENCE_HPP_
+#ifndef ONCE__CPPUTILS__REFERENCE__REFERENCE_HPP_
+#define ONCE__CPPUTILS__REFERENCE__REFERENCE_HPP_
 
 #include <memory>
 #include <type_traits>
@@ -114,4 +114,4 @@ protected:
 
 } // namespace once
 
-#endif // JULIBERT_CPPUTILS_REFERENCE_REFERENCE_HPP_
+#endif // ONCE__CPPUTILS__REFERENCE__REFERENCE_HPP_

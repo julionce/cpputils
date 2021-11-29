@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef JULIBERT_CPPUTILS_SHAREDMUTEX_SHAREDMUTEX_HPP_
-#define JULIBERT_CPPUTILS_SHAREDMUTEX_SHAREDMUTEX_HPP_
+#ifndef ONCE__CPPUTILS__SHAREDMUTEX__SHAREDMUTEX_HPP_
+#define ONCE__CPPUTILS__SHAREDMUTEX__SHAREDMUTEX_HPP_
 
 #include <condition_variable>
 #include <mutex>
@@ -131,4 +131,4 @@ private:
 } // namespace cpputils
 } // namespace once
 
-#endif // JULIBERT_CPPUTILS_SHAREDMUTEX_SHAREDMUTEX_HPP_
+#endif // ONCE__CPPUTILS__SHARED_MUTEX__SHARED_MUTEX_HPP_

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef JULIBERT_CPPUTILS_TREE_TREE_HPP_
-#define JULIBERT_CPPUTILS_TREE_TREE_HPP_
+#ifndef ONCE__CPPUTILS__TREE__TREE_HPP_
+#define ONCE__CPPUTILS__TREE__TREE_HPP_
 
 #include <once/cpputils/reference/reference.hpp>
 
@@ -104,4 +104,4 @@ for_each_in_postorder(Node<T> const& node, F function)
 } // namespace tree
 } // namespace once
 
-#endif // JULIBERT_CPPUTILS_TREE_TREE_HPP_
+#endif // ONCE__CPPUTILS__TREE__TREE_HPP_

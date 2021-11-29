@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef JULIBERT__CPPUTILS__STREAM__XCDR2_HPP_
-#define JULIBERT__CPPUTILS__STREAM__XCDR2_HPP_
+#ifndef ONCE__CPPUTILS__STREAM__XCDR2_HPP_
+#define ONCE__CPPUTILS__STREAM__XCDR2_HPP_
 
 #include <algorithm>
 #include <array>
@@ -227,4 +227,4 @@ using VectorStream = VectorStreamEndian<Endian::native>;
 } // namespace utils
 } // namespace once
 
-#endif // JULIBERT__CPPUTILS__STREAM__XCDR2_HPP_
+#endif // ONCE__CPPUTILS__STREAM__XCDR2_HPP_

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef JULIBERT_CPPUTILS_STREAM_JSON_HPP_
-#define JULIBERT_CPPUTILS_STREAM_JSON_HPP_
+#ifndef ONCE__CPPUTILS__STREAM__JSON_HPP_
+#define ONCE__CPPUTILS__STREAM__JSON_HPP_
 
 #include <algorithm>
 #include <array>
@@ -169,4 +169,4 @@ Json::operator<<(const std::optional<T>& optional)
 
 } // namespace once::cpputils::stream
 
-#endif // JULIBERT_CPPUTILS_STREAM_JSON_HPP_
+#endif // ONCE__CPPUTILS__STREAM__JSON_HPP_
