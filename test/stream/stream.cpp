@@ -26,7 +26,7 @@
 #include <limits>
 #include <utility>
 
-using namespace julibert::cpputils;
+using namespace once::cpputils;
 
 #define TEST_SERIALIZE(TYPE)                                                   \
   SECTION("serializing a TYPE")                                                \

@@ -52,7 +52,7 @@ include(HarvestPackage)
 # Library.
 ###############################################################################
 add_library(${PROJECT_NAME} INTERFACE)
-add_library(julibert::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+add_library(once::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
     INTERFACE
@@ -105,7 +105,7 @@ install(
     EXPORT
         ${PROJECT_NAME}-targets
     NAMESPACE
-        julibert::
+        once::
     DESTINATION
         ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake
     )

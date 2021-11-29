@@ -24,7 +24,7 @@
 #include <optional>
 #include <vector>
 
-namespace julibert {
+namespace once {
 namespace tree {
 
 template<typename T>
@@ -102,6 +102,6 @@ for_each_in_postorder(Node<T> const& node, F function)
 }
 
 } // namespace tree
-} // namespace julibert
+} // namespace once
 
 #endif // JULIBERT_CPPUTILS_TREE_TREE_HPP_

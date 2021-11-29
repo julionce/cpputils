@@ -36,7 +36,7 @@ private:
   double b_;
 };
 
-using namespace julibert;
+using namespace once;
 
 SCENARIO("tree::Node")
 {

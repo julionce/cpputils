@@ -20,9 +20,9 @@
 #include <type_traits>
 #include <utility>
 
-#include <julibert/cpputils/type_traits/type_traits.hpp>
+#include <once/cpputils/type_traits/type_traits.hpp>
 
-namespace julibert {
+namespace once {
 
 template<typename T>
 class reference
@@ -112,6 +112,6 @@ protected:
   std::shared_ptr<T> impl_;
 };
 
-} // namespace julibert
+} // namespace once
 
 #endif // JULIBERT_CPPUTILS_REFERENCE_REFERENCE_HPP_

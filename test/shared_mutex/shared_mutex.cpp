@@ -22,14 +22,14 @@
 #include <chrono>
 #include <thread>
 
-julibert::cpputils::SharedMutex shared_mutex;
+once::cpputils::SharedMutex shared_mutex;
 
 class SharedTask
 {
 public:
   void run()
   {
-    julibert::cpputils::SharedLock lock(shared_mutex);
+    once::cpputils::SharedLock lock(shared_mutex);
     init_time = std::chrono::steady_clock::now();
     std::this_thread::sleep_for(std::chrono::microseconds(500));
     final_time = std::chrono::steady_clock::now();
@@ -45,7 +45,7 @@ class ExclusiveTask
 public:
   void run()
   {
-    julibert::cpputils::ExclusiveLock lock(shared_mutex);
+    once::cpputils::ExclusiveLock lock(shared_mutex);
     init_time = std::chrono::steady_clock::now();
     std::this_thread::sleep_for(std::chrono::microseconds(500));
     final_time = std::chrono::steady_clock::now();

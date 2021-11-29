@@ -20,7 +20,7 @@
 #include <mutex>
 #include <thread>
 
-namespace julibert {
+namespace once {
 namespace cpputils {
 
 class SharedMutex
@@ -129,6 +129,6 @@ private:
 };
 
 } // namespace cpputils
-} // namespace julibert
+} // namespace once
 
 #endif // JULIBERT_CPPUTILS_SHAREDMUTEX_SHAREDMUTEX_HPP_

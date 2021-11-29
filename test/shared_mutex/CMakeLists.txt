@@ -20,7 +20,7 @@ add_executable(${_test_name} ${CMAKE_CURRENT_SOURCE_DIR}/shared_mutex.cpp)
 
 target_link_libraries(${_test_name}
     PRIVATE
-        julibert::cpputils
+        once::cpputils
         Catch2::Catch2
         Threads::Threads
     )

@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-namespace julibert {
+namespace once {
 namespace cpputils {
 
 // Possible endian implementation according with
@@ -229,6 +229,6 @@ using VectorStream = VectorStreamEndian<Endian::native>;
 
 } // namespace xcdr2
 } // namespace utils
-} // namespace julibert
+} // namespace once
 
 #endif // JULIBERT__CPPUTILS__STREAM__XCDR2_HPP_

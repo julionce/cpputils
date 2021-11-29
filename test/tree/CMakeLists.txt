@@ -20,7 +20,7 @@ add_executable(${_test_name}
 
 target_link_libraries(${_test_name}
     PRIVATE
-        julibert::cpputils
+        once::cpputils
         Catch2::Catch2
     )
 
