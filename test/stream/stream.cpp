@@ -16,7 +16,7 @@
 
 #define CATCH_CONFIG_MAIN
 
-#include <julibert/cpputils/stream/xcdr2.hpp>
+#include <once/cpputils/stream/xcdr2.hpp>
 
 #include <catch2/catch.hpp>
 
