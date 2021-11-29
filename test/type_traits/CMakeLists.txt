@@ -21,7 +21,7 @@ add_executable(${_test_name} ${CMAKE_CURRENT_SOURCE_DIR}/type_traits.cpp
 
 target_link_libraries(${_test_name}
     PRIVATE
-        julibert::cpputils
+        once::cpputils
         Catch2::Catch2
     )
 

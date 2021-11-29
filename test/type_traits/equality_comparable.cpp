@@ -15,12 +15,12 @@
  */
 //#define CATCH_CONFIG_MAIN
 
-#include <julibert/cpputils/type_traits/equality_comparable.hpp>
+#include <once/cpputils/type_traits/equality_comparable.hpp>
 
 #include <catch2/catch.hpp>
 #include <cstdint>
 
-using namespace julibert;
+using namespace once;
 
 struct Bar
 {

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <julibert/cpputils/type_traits/less_than_comparable.hpp>
+#include <once/cpputils/type_traits/less_than_comparable.hpp>
 
 #include <catch2/catch.hpp>
 #include <cstdint>
 
-using namespace julibert;
+using namespace once;
 
 struct Bar
 {

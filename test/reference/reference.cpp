@@ -48,8 +48,8 @@ private:
   uint8_t bar_ = 0;
 };
 
-using MyReference = once::Reference<MyReferenceImpl>;
-using MyConstReference = once::Reference<const MyReferenceImpl>;
+using MyReference = once::reference<MyReferenceImpl>;
+using MyConstReference = once::reference<const MyReferenceImpl>;
 
 SCENARIO("Reference")
 {
@@ -278,7 +278,7 @@ struct ReferenceBaseImpl
   int foo;
 };
 
-using ReferenceBase = once::Reference<ReferenceBaseImpl>;
+using ReferenceBase = once::reference<ReferenceBaseImpl>;
 
 struct ReferenceDerivedImpl : ReferenceBaseImpl
 {
@@ -286,7 +286,7 @@ struct ReferenceDerivedImpl : ReferenceBaseImpl
   int bar;
 };
 
-using ReferenceDerived = once::Reference<ReferenceDerivedImpl>;
+using ReferenceDerived = once::reference<ReferenceDerivedImpl>;
 
 SCENARIO("Reference conversion")
 {
@@ -300,7 +300,7 @@ SCENARIO("Reference conversion")
   }
 }
 
-using StringRef = once::Reference<std::string>;
+using StringRef = once::reference<std::string>;
 
 SCENARIO("Reference initializer_list constructor")
 {

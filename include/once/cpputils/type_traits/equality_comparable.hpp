@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef JULIBERT__CPPUTILS__TYPE_TRAITS__EQUALITY_COMPARABLE_HPP_
-#define JULIBERT__CPPUTILS__TYPE_TRAITS__EQUALITY_COMPARABLE_HPP_
+#ifndef ONCE__CPPUTILS__TYPE_TRAITS__EQUALITY_COMPARABLE_HPP_
+#define ONCE__CPPUTILS__TYPE_TRAITS__EQUALITY_COMPARABLE_HPP_
 
 #include <type_traits>
 
-namespace julibert {
+namespace once {
 
 namespace detail {
 template<typename T>
@@ -70,6 +70,6 @@ template<typename T>
 using require_equality_comparable =
   std::enable_if_t<is_equality_comparable_v<T>>;
 
-} // namespace julibert
+} // namespace once
 
-#endif // JULIBERT__CPPUTILS__TYPE_TRAITS__EQUALITY_COMPARABLE_HPP_
+#endif // ONCE__CPPUTILS__TYPE_TRAITS__EQUALITY_COMPARABLE_HPP_

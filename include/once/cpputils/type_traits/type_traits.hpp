@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef JULIBERT__CPPUTILS__TYPE_TRAITS__TYPE_TRAITS_HPP_
-#define JULIBERT__CPPUTILS__TYPE_TRAITS__TYPE_TRAITS_HPP_
+#ifndef ONCE__CPPUTILS__TYPE_TRAITS__TYPE_TRAITS_HPP_
+#define ONCE__CPPUTILS__TYPE_TRAITS__TYPE_TRAITS_HPP_
 
 #include "./equality_comparable.hpp"
 #include "./less_than_comparable.hpp"
 
-#endif // JULIBERT__CPPUTILS__TYPE_TRAITS__TYPE_TRAITS_HPP_
+#endif // ONCE__CPPUTILS__TYPE_TRAITS__TYPE_TRAITS_HPP_
