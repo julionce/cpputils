@@ -37,7 +37,7 @@ set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE PATH "Headers install 
 include(FetchContent)
 FetchContent_Declare(harvester
     GIT_REPOSITORY
-        git@github.com:julibert/harvester.git
+        https://github.com/julibert/harvester.git
     GIT_TAG
         master
     )
