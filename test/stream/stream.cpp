@@ -31,7 +31,7 @@ using namespace julibert::cpputils;
 #define TEST_SERIALIZE(TYPE)                                                   \
   SECTION("serializing a TYPE")                                                \
   {                                                                            \
-    TYPE data{ 0x11 };                                                         \
+    TYPE data(0x11);                                                           \
     stream << data;                                                            \
     REQUIRE(sizeof(TYPE) == stream.ser_length());                              \
     REQUIRE(0 == stream.deser_length());                                       \
@@ -40,7 +40,7 @@ using namespace julibert::cpputils;
 #define TEST_DESERIALIZE(TYPE)                                                 \
   SECTION("deserializing a TYPE")                                              \
   {                                                                            \
-    TYPE ser_data{ 0x11 };                                                     \
+    TYPE ser_data(0x11);                                                       \
     stream << ser_data;                                                        \
     TYPE deser_data{};                                                         \
     stream >> deser_data;                                                      \
