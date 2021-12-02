@@ -23,15 +23,15 @@
 namespace julibert {
 
 template<typename T>
-class Reference
+class reference
 {
   template<typename>
-  friend class Reference;
+  friend class reference;
 
 public:
   template<typename... Args,
            std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = true>
-  explicit Reference(Args&&... args)
+  explicit reference(Args&&... args)
     : impl_{ std::make_shared<T>(args...) }
   {}
 
@@ -39,47 +39,47 @@ public:
     typename U,
     std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>&>,
                      bool> = true>
-  explicit Reference(std::initializer_list<U> ilist)
+  explicit reference(std::initializer_list<U> ilist)
     : impl_{ std::make_shared<T>(T(ilist)) }
   {}
 
-  Reference(Reference&&) = delete;
-  Reference(Reference const&) = default;
-  Reference& operator=(Reference&&) = delete;
-  Reference& operator=(Reference const&) = default;
+  reference(reference&&) = delete;
+  reference(reference const&) = default;
+  reference& operator=(reference&&) = delete;
+  reference& operator=(reference const&) = default;
 
   T& get() const { return *impl_.get(); }
 
   T* operator->() const { return impl_.get(); }
 
-  friend bool operator<(Reference<T> const& lhs, Reference<T> const& rhs)
+  friend bool operator<(reference<T> const& lhs, reference<T> const& rhs)
   {
     return *lhs.impl_ < *rhs.impl_;
   }
 
-  friend bool operator==(Reference<T> const& lhs, Reference<T> const& rhs)
+  friend bool operator==(reference<T> const& lhs, reference<T> const& rhs)
   {
     return (lhs.impl_.get() == rhs.impl_.get()) || (*lhs.impl_ == *rhs.impl_);
   }
 
-  friend bool operator!=(Reference<T> const& lhs, Reference<T> const& rhs)
+  friend bool operator!=(reference<T> const& lhs, reference<T> const& rhs)
   {
     return !(lhs == rhs);
   }
 
   template<typename R, typename = std::enable_if_t<std::is_convertible_v<T, R>>>
-  explicit operator Reference<R>() const
+  explicit operator reference<R>() const
   {
     return std::static_pointer_cast<R>(impl_);
   }
 
-  static Reference<T> clone(Reference<T> const& other)
+  static reference<T> clone(reference<T> const& other)
   {
-    return Reference<T>(std::make_shared<T>(*other.impl_.get()));
+    return reference<T>(std::make_shared<T>(*other.impl_.get()));
   }
 
 private:
-  Reference(std::shared_ptr<T>&& impl)
+  reference(std::shared_ptr<T>&& impl)
     : impl_{ impl }
   {}
 

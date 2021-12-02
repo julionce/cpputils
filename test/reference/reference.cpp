@@ -49,8 +49,8 @@ private:
   uint8_t bar_ = 0;
 };
 
-using MyReference = julibert::Reference<MyReferenceImpl>;
-using MyConstReference = julibert::Reference<const MyReferenceImpl>;
+using MyReference = julibert::reference<MyReferenceImpl>;
+using MyConstReference = julibert::reference<const MyReferenceImpl>;
 
 SCENARIO("Reference")
 {
@@ -210,7 +210,7 @@ struct ReferenceBaseImpl
   int foo;
 };
 
-using ReferenceBase = julibert::Reference<ReferenceBaseImpl>;
+using ReferenceBase = julibert::reference<ReferenceBaseImpl>;
 
 struct ReferenceDerivedImpl : ReferenceBaseImpl
 {
@@ -218,7 +218,7 @@ struct ReferenceDerivedImpl : ReferenceBaseImpl
   int bar;
 };
 
-using ReferenceDerived = julibert::Reference<ReferenceDerivedImpl>;
+using ReferenceDerived = julibert::reference<ReferenceDerivedImpl>;
 
 SCENARIO("Reference conversion")
 {
@@ -232,7 +232,7 @@ SCENARIO("Reference conversion")
   }
 }
 
-using StringRef = julibert::Reference<std::string>;
+using StringRef = julibert::reference<std::string>;
 
 SCENARIO("Reference initializer_list constructor")
 {
