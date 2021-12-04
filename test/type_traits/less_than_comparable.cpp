@@ -15,7 +15,7 @@
  */
 #define CATCH_CONFIG_MAIN
 
-#include <julibert/cpputils/type_traits/type_traits.hpp>
+#include <julibert/cpputils/type_traits/less_than_comparable.hpp>
 
 #include <catch2/catch.hpp>
 #include <cstdint>
