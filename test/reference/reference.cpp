@@ -31,13 +31,12 @@ public:
 
   friend bool operator<(MyReferenceImpl const& lhs, MyReferenceImpl const& rhs)
   {
-    return (lhs.foo_ < rhs.foo_) ||
-           ((lhs.foo_ == rhs.foo_) && (lhs.bar_ < rhs.bar_));
+    return std::tie(lhs.foo_, lhs.bar_) < std::tie(rhs.foo_, rhs.bar_);
   }
 
   friend bool operator==(MyReferenceImpl const& lhs, MyReferenceImpl const& rhs)
   {
-    return (lhs.foo_ == rhs.foo_) && (lhs.bar_ == rhs.bar_);
+    return std::tie(lhs.foo_, lhs.bar_) == std::tie(rhs.foo_, rhs.bar_);
   }
 
   void foo(uint8_t foo) { foo_ = foo; }
@@ -139,7 +138,7 @@ SCENARIO("Reference")
   }
 }
 
-SCENARIO("Reference operator<")
+SCENARIO("Reference comparison operators")
 {
   GIVEN("two References foo and bar")
   {
@@ -152,6 +151,31 @@ SCENARIO("Reference operator<")
         REQUIRE(foo < bar);
         REQUIRE_FALSE(bar < foo);
       }
+      THEN("operator> shall return false")
+      {
+        REQUIRE_FALSE(foo > bar);
+        REQUIRE(bar > foo);
+      }
+      THEN("operator<= shall return true")
+      {
+        REQUIRE(foo <= bar);
+        REQUIRE_FALSE(bar <= foo);
+      }
+      THEN("operator>= shall return false")
+      {
+        REQUIRE_FALSE(foo >= bar);
+        REQUIRE(bar >= foo);
+      }
+      THEN("operator== shall return false")
+      {
+        REQUIRE_FALSE(foo == bar);
+        REQUIRE_FALSE(bar == foo);
+      }
+      THEN("operator!= shall return true")
+      {
+        REQUIRE(foo != bar);
+        REQUIRE(bar != foo);
+      }
     }
 
     WHEN("foo is equal than bar")
@@ -163,23 +187,67 @@ SCENARIO("Reference operator<")
         REQUIRE_FALSE(foo < bar);
         REQUIRE_FALSE(bar < foo);
       }
+      THEN("operator> shall return false")
+      {
+        REQUIRE_FALSE(foo > bar);
+        REQUIRE_FALSE(bar > foo);
+      }
+      THEN("operator<= shall return true")
+      {
+        REQUIRE(foo <= bar);
+        REQUIRE(bar <= foo);
+      }
+      THEN("operator>= shall return true")
+      {
+        REQUIRE(foo >= bar);
+        REQUIRE(bar >= foo);
+      }
+      THEN("operator== shall return true")
+      {
+        REQUIRE(foo == bar);
+        REQUIRE(bar == foo);
+      }
+      THEN("operator!= shall return false")
+      {
+        REQUIRE_FALSE(foo != bar);
+        REQUIRE_FALSE(bar != foo);
+      }
     }
-  }
-}
 
-SCENARIO("Reference operator==")
-{
-  GIVEN("two References")
-  {
     WHEN("one is a copy of the other")
     {
       MyReference foo(11, 89);
       MyReference bar(foo);
 
+      THEN("operator< shall return false")
+      {
+        REQUIRE_FALSE(foo < bar);
+        REQUIRE_FALSE(bar < foo);
+      }
+      THEN("operator> shall return false")
+      {
+        REQUIRE_FALSE(foo > bar);
+        REQUIRE_FALSE(bar > foo);
+      }
+      THEN("operator<= shall return true")
+      {
+        REQUIRE(foo <= bar);
+        REQUIRE(bar <= foo);
+      }
+      THEN("operator>= shall return true")
+      {
+        REQUIRE(foo >= bar);
+        REQUIRE(bar >= foo);
+      }
       THEN("operator== shall return true")
       {
         REQUIRE(foo == bar);
+        REQUIRE(bar == foo);
+      }
+      THEN("operator!= shall return false")
+      {
         REQUIRE_FALSE(foo != bar);
+        REQUIRE_FALSE(bar != foo);
       }
     }
 

@@ -20,6 +20,8 @@
 #include <type_traits>
 #include <utility>
 
+#include <julibert/cpputils/type_traits/type_traits.hpp>
+
 namespace julibert {
 
 template<typename T>
@@ -54,11 +56,34 @@ public:
 
   friend bool operator<(reference<T> const& lhs, reference<T> const& rhs)
   {
-    return *lhs.impl_ < *rhs.impl_;
+    static_assert(
+      is_less_than_comparable_v<T>,
+      "Error in reference<T>: the type T is not less than comparable");
+
+    return (lhs.impl_.get() != rhs.impl_.get()) && *lhs.impl_ < *rhs.impl_;
+  }
+
+  friend bool operator>(reference<T> const& lhs, reference<T> const& rhs)
+  {
+    return (rhs < lhs);
+  }
+
+  friend bool operator<=(reference<T> const& lhs, reference<T> const& rhs)
+  {
+    return !(lhs > rhs);
+  }
+
+  friend bool operator>=(reference<T> const& lhs, reference<T> const& rhs)
+  {
+    return !(lhs < rhs);
   }
 
   friend bool operator==(reference<T> const& lhs, reference<T> const& rhs)
   {
+    static_assert(
+      is_equality_comparable_v<T>,
+      "Error in reference<T>: the type T is not equality comparable");
+
     return (lhs.impl_.get() == rhs.impl_.get()) || (*lhs.impl_ == *rhs.impl_);
   }
 
