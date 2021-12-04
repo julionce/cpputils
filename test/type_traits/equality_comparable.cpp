@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+//#define CATCH_CONFIG_MAIN
 
-#include <julibert/cpputils/type_traits/less_than_comparable.hpp>
+#include <julibert/cpputils/type_traits/equality_comparable.hpp>
 
 #include <catch2/catch.hpp>
 #include <cstdint>
@@ -27,42 +28,43 @@ struct Bar
 };
 
 bool
-operator<(Bar const& lhs, Bar const& rhs)
+operator==(Bar const& lhs, Bar const& rhs)
 {
-  return lhs.data < rhs.data;
+  return lhs.data == rhs.data;
 }
 
-struct NonConstLessComparableBar
+struct NonConstEqualityComparableBar
 {
   int data;
 };
 
 bool
-operator<(NonConstLessComparableBar const& lhs, NonConstLessComparableBar& rhs)
+operator==(NonConstEqualityComparableBar const& lhs,
+           NonConstEqualityComparableBar& rhs)
 {
-  return lhs.data < rhs.data;
+  return lhs.data == rhs.data;
 }
 
-struct NonMatchedLessComparableBar
+struct NonMatchedEqualityComparableBar
 {
   int data;
 };
 
 bool
-operator<(NonConstLessComparableBar const& lhs, int& rhs)
+operator==(NonConstEqualityComparableBar const& lhs, int& rhs)
 {
-  return lhs.data < rhs;
+  return lhs.data == rhs;
 }
 
-SCENARIO("LessThanComparable trait")
+SCENARIO("EqualityComparable trait")
 {
   GIVEN("an arithmetic type")
   {
     THEN("the trait value shall be true")
     {
-      REQUIRE(is_less_than_comparable<bool>::value);
-      REQUIRE(is_less_than_comparable<char>());
-      REQUIRE(is_less_than_comparable_v<int>);
+      REQUIRE(is_equality_comparable<bool>::value);
+      REQUIRE(is_equality_comparable<char>());
+      REQUIRE(is_equality_comparable_v<int>);
     }
   }
 
@@ -77,7 +79,7 @@ SCENARIO("LessThanComparable trait")
 
     THEN("the trait value shall be true")
     {
-      REQUIRE(is_less_than_comparable_v<MyEnum>);
+      REQUIRE(is_equality_comparable_v<MyEnum>);
     }
   }
 
@@ -86,7 +88,7 @@ SCENARIO("LessThanComparable trait")
     THEN("the trait value shall be true")
     {
       struct Foo;
-      REQUIRE(is_less_than_comparable_v<std::add_pointer_t<Foo>>);
+      REQUIRE(is_equality_comparable_v<std::add_pointer_t<Foo>>);
     }
   }
 
@@ -100,13 +102,13 @@ SCENARIO("LessThanComparable trait")
         struct Foo
         {
           int data;
-          constexpr bool operator<(Foo const& other) const
+          constexpr bool operator==(Foo const& other) const
           {
-            return data < other.data;
+            return data == other.data;
           }
         };
-        REQUIRE(is_less_than_comparable_v<Foo>);
-        REQUIRE(is_less_than_comparable_v<Bar>);
+        REQUIRE(is_equality_comparable_v<Foo>);
+        REQUIRE(is_equality_comparable_v<Bar>);
       }
     }
 
@@ -117,23 +119,23 @@ SCENARIO("LessThanComparable trait")
         struct Foo
         {
           int data;
-          constexpr bool operator<(Foo& other) const
+          constexpr bool operator==(Foo& other) const
           {
-            return data < other.data;
+            return data == other.data;
           }
         };
 
         struct Qux
         {
           int data;
-          constexpr bool operator<(Foo const& other)
+          constexpr bool operator==(Foo const& other)
           {
-            return data < other.data;
+            return data == other.data;
           }
         };
-        REQUIRE_FALSE(is_less_than_comparable_v<Foo>);
-        REQUIRE_FALSE(is_less_than_comparable_v<NonConstLessComparableBar>);
-        REQUIRE_FALSE(is_less_than_comparable_v<Qux>);
+        REQUIRE_FALSE(is_equality_comparable_v<Foo>);
+        REQUIRE_FALSE(is_equality_comparable_v<NonConstEqualityComparableBar>);
+        REQUIRE_FALSE(is_equality_comparable_v<Qux>);
       }
     }
 
@@ -144,13 +146,14 @@ SCENARIO("LessThanComparable trait")
         struct Foo
         {
           int data;
-          constexpr bool operator<(int const& other) const
+          constexpr bool operator==(int const& other) const
           {
-            return data < other;
+            return data == other;
           }
         };
-        REQUIRE_FALSE(is_less_than_comparable_v<Foo>);
-        REQUIRE_FALSE(is_less_than_comparable_v<NonMatchedLessComparableBar>);
+        REQUIRE_FALSE(is_equality_comparable_v<Foo>);
+        REQUIRE_FALSE(
+          is_equality_comparable_v<NonMatchedEqualityComparableBar>);
       }
     }
   }
