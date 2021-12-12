@@ -54,7 +54,7 @@ operator<(NonConstLessComparableBar const& lhs, int& rhs)
   return lhs.data < rhs;
 }
 
-SCENARIO("LessThanComparable trait")
+SCENARIO("is_less_than_comparable trait")
 {
   GIVEN("an arithmetic type")
   {

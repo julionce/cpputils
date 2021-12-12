@@ -56,7 +56,7 @@ operator==(NonConstEqualityComparableBar const& lhs, int& rhs)
   return lhs.data == rhs;
 }
 
-SCENARIO("EqualityComparable trait")
+SCENARIO("is_equality_comparable trait")
 {
   GIVEN("an arithmetic type")
   {

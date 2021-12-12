@@ -16,3 +16,21 @@
 #define CATCH_CONFIG_MAIN
 
 #include <catch2/catch.hpp>
+
+#include <once/cpputils/type_traits/type_traits.hpp>
+
+using namespace once;
+
+SCENARIO("is_variant trait")
+{
+  GIVEN("a variant type")
+  {
+    using MyVariant = std::variant<int>;
+    THEN("the trait value shall be true") { REQUIRE(is_variant_v<MyVariant>); }
+  }
+
+  GIVEN("a non-variant type")
+  {
+    THEN("the trait value shall be false") { REQUIRE_FALSE(is_variant_v<int>); }
+  }
+}
