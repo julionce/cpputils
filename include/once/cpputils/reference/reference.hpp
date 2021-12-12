@@ -39,6 +39,30 @@ public:
 
   template<
     typename U,
+    typename... Args,
+    std::enable_if_t<
+      std::conjunction_v<is_variant<T>, std::is_constructible<U, Args...>>,
+      bool> = true>
+  explicit reference(std::in_place_type_t<U>, Args&&... args)
+    : impl_{ std::make_shared<T>(std::in_place_type<U>, args...) }
+  {}
+
+  template<typename U,
+           typename V,
+           typename... Args,
+           std::enable_if_t<
+             std::conjunction_v<
+               is_variant<T>,
+               std::is_constructible<U, std::initializer_list<V>&, Args...>>,
+             bool> = true>
+  explicit reference(std::in_place_type_t<U>,
+                     std::initializer_list<V> il,
+                     Args&&... args)
+    : impl_{ std::make_shared<T>(std::in_place_type<U>, il, args...) }
+  {}
+
+  template<
+    typename U,
     std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>&>,
                      bool> = true>
   explicit reference(std::initializer_list<U> ilist)

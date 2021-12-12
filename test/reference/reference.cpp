@@ -306,3 +306,21 @@ SCENARIO("Reference initializer_list constructor")
 {
   StringRef my_string_ref{ 'a', 'b', 'c', 'd' };
 }
+
+using VariantRef = once::reference<std::variant<int, StringRef>>;
+
+SCENARIO("variant reference")
+{
+  VariantRef my_ref{ StringRef{ "hello" } };
+  REQUIRE(std::holds_alternative<StringRef>(my_ref.get()));
+  REQUIRE(std::get<StringRef>(my_ref.get()).get() == "hello");
+
+  my_ref = VariantRef{ std::in_place_type<StringRef>, "world" };
+  REQUIRE(std::holds_alternative<StringRef>(my_ref.get()));
+  REQUIRE(std::get<StringRef>(my_ref.get()).get() == "world");
+
+  my_ref =
+    VariantRef{ std::in_place_type<StringRef>, { 'h', 'e', 'l', 'l', 'o' } };
+  REQUIRE(std::holds_alternative<StringRef>(my_ref.get()));
+  REQUIRE(std::get<StringRef>(my_ref.get()).get() == "hello");
+}
