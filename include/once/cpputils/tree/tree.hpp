@@ -65,40 +65,40 @@ private:
 
 template<typename T, typename F>
 void
-for_each_in_preorder(node<T>& node, F function)
+walk_in_preorder(node<T>& node, F function)
 {
   function(node);
   for (auto&& n : node.children()) {
-    for_each_in_preorder(n, function);
+    walk_in_preorder(n, function);
   }
 }
 
 template<typename T, typename F>
 void
-for_each_in_preorder(node<T> const& node, F function)
+walk_in_preorder(node<T> const& node, F function)
 {
   function(node);
   for (auto&& n : node.children()) {
-    for_each_in_preorder(n, function);
+    walk_in_preorder(n, function);
   }
 }
 
 template<typename T, typename F>
 void
-for_each_in_postorder(node<T>& node, F function)
+walk_in_postorder(node<T>& node, F function)
 {
   for (auto&& n : node.children()) {
-    for_each_in_postorder(n, function);
+    walk_in_postorder(n, function);
   }
   function(node);
 }
 
 template<typename T, typename F>
 void
-for_each_in_postorder(node<T> const& node, F function)
+walk_in_postorder(node<T> const& node, F function)
 {
   for (auto&& n : node.children()) {
-    for_each_in_postorder(n, function);
+    walk_in_postorder(n, function);
   }
   function(node);
 }
