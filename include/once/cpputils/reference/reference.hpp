@@ -45,9 +45,7 @@ public:
     : impl_{ std::make_shared<T>(T(ilist)) }
   {}
 
-  reference(reference&&) = delete;
   reference(reference const&) = default;
-  reference& operator=(reference&&) = delete;
   reference& operator=(reference const&) = default;
 
   T& get() const { return *impl_.get(); }
