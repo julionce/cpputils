@@ -38,33 +38,17 @@ private:
 
 using namespace once;
 
-SCENARIO("tree::Node")
+SCENARIO("tree::node")
 {
-  using Node = tree::Node<char>;
-  GIVEN("a Node")
+  using node = tree::node<char>;
+  GIVEN("a node")
   {
-    Node root{ 'F' };
+    node root{ 'F' };
 
     THEN("it shall not have parent") { REQUIRE_FALSE(root.parent()); }
 
     WHEN("children are added")
     {
-      //      auto b_node_ref = root.add_child('B');
-      //      auto a_node_ref = b_node_ref.get().add_child('A');
-      //      auto d_node_ref = b_node_ref.get().add_child('D');
-      //      auto c_node_ref = d_node_ref.get().add_child('C');
-      //      auto e_node_ref = d_node_ref.get().add_child('E');
-      //      auto g_node_ref = root.add_child('G');
-      //      auto i_node_ref = g_node_ref.get().add_child('I');
-      //      auto h_node_ref = i_node_ref.get().add_child('H');
-      //
-      //      THEN("the parent of its children shall be itseft")
-      //      {
-      //        REQUIRE(b_node_ref.get().parent().value().get() == root);
-      //        REQUIRE(a_node_ref.get().parent().value().get() ==
-      //        b_node_ref.get());
-      //      }
-
       auto&& b_node = root.add_child('B');
       auto&& a_node = b_node.add_child('A');
       auto&& d_node = b_node.add_child('D');

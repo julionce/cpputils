@@ -28,42 +28,44 @@ namespace once {
 namespace tree {
 
 template<typename T>
-class Node
+class node
 {
-  using ReferenceType = std::reference_wrapper<Node<T>>;
-  using ChildrenType = std::list<Node<T>>;
+  using parent_type = std::optional<std::reference_wrapper<node<T>>>;
+  using children_type = std::list<node<T>>;
+  using reference = T&;
+  using const_reference = const T&;
 
 public:
   template<typename... Args>
-  explicit Node(Args&&... args)
+  explicit node(Args&&... args)
     : data_{ std::forward<Args>(args)... }
   {}
 
-  std::optional<ReferenceType> parent() const { return parent_; }
-  ChildrenType const& children() const { return children_; }
+  parent_type parent() const { return parent_; }
+  children_type const& children() const { return children_; }
 
   template<typename... Args>
-  Node<T>& add_child(Args&&... args)
+  node<T>& add_child(Args&&... args)
   {
     children_.emplace_back(std::forward<Args>(args)...);
     children_.back().parent_ = *this;
     return children_.back();
   }
 
-  T const& data() const { return data_; }
-  T& data() { return data_; }
+  const_reference data() const { return data_; }
+  reference data() { return data_; }
 
-  bool operator==(Node const& other) const { return &data_ == &other.data_; }
+  bool operator==(node const& other) const { return &data_ == &other.data_; }
 
 private:
   T data_;
-  std::optional<ReferenceType> parent_;
-  ChildrenType children_;
+  parent_type parent_;
+  children_type children_;
 };
 
 template<typename T, typename F>
 void
-for_each_in_preorder(Node<T>& node, F function)
+for_each_in_preorder(node<T>& node, F function)
 {
   function(node);
   for (auto&& n : node.children()) {
@@ -73,7 +75,7 @@ for_each_in_preorder(Node<T>& node, F function)
 
 template<typename T, typename F>
 void
-for_each_in_preorder(Node<T> const& node, F function)
+for_each_in_preorder(node<T> const& node, F function)
 {
   function(node);
   for (auto&& n : node.children()) {
@@ -83,7 +85,7 @@ for_each_in_preorder(Node<T> const& node, F function)
 
 template<typename T, typename F>
 void
-for_each_in_postorder(Node<T>& node, F function)
+for_each_in_postorder(node<T>& node, F function)
 {
   for (auto&& n : node.children()) {
     for_each_in_postorder(n, function);
@@ -93,7 +95,7 @@ for_each_in_postorder(Node<T>& node, F function)
 
 template<typename T, typename F>
 void
-for_each_in_postorder(Node<T> const& node, F function)
+for_each_in_postorder(node<T> const& node, F function)
 {
   for (auto&& n : node.children()) {
     for_each_in_postorder(n, function);
