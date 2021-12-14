@@ -72,13 +72,14 @@ SCENARIO("tree::node")
         std::vector<char> expected_postorder{ 'A', 'C', 'E', 'D', 'B',
                                               'H', 'I', 'G', 'F' };
 
-        tree::walk_in_preorder(
-          root, [&result](auto&& item) { result.push_back(item.data()); });
+        root.walk_in_preorder(
+          [&result](auto&& data) { result.push_back(data); });
         REQUIRE(result == expected_preorder);
 
         result.clear();
-        tree::walk_in_postorder(
-          root, [&result](auto&& item) { result.push_back(item.data()); });
+
+        root.walk_in_postorder(
+          [&result](auto&& data) { result.push_back(data); });
         REQUIRE(result == expected_postorder);
       }
     }

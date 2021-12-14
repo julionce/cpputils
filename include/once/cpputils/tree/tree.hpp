@@ -59,54 +59,57 @@ public:
   const_reference data() const { return data_; }
   reference data() { return data_; }
 
+  template<typename F>
+  void walk_in_preorder(F function) const
+  {
+    walk_in_preorder(*this, function);
+  }
+
+  template<typename F>
+  void walk_in_preorder(F function)
+  {
+    walk_in_preorder(*this, function);
+  }
+
+  template<typename F>
+  void walk_in_postorder(F function) const
+  {
+    walk_in_postorder(*this, function);
+  }
+
+  template<typename F>
+  void walk_in_postorder(F function)
+  {
+    walk_in_postorder(*this, function);
+  }
+
   bool operator==(node const& other) const { return &data_ == &other.data_; }
   bool operator!=(node const& other) const { return !(*this == other); }
+
+private:
+  template<typename N, typename F>
+  static void walk_in_preorder(N&& node, F function)
+  {
+    function(node.data_);
+    for (auto&& child : node.children_) {
+      walk_in_preorder(child, function);
+    }
+  }
+
+  template<typename N, typename F>
+  static void walk_in_postorder(N&& node, F function)
+  {
+    for (auto&& child : node.children_) {
+      walk_in_postorder(child, function);
+    }
+    function(node.data_);
+  }
 
 private:
   T data_;
   parent_type parent_;
   children_type children_;
 };
-
-template<typename T, typename F>
-void
-walk_in_preorder(node<T>& node, F function)
-{
-  function(node);
-  for (auto&& n : node.children()) {
-    walk_in_preorder(n, function);
-  }
-}
-
-template<typename T, typename F>
-void
-walk_in_preorder(node<T> const& node, F function)
-{
-  function(node);
-  for (auto&& n : node.children()) {
-    walk_in_preorder(n, function);
-  }
-}
-
-template<typename T, typename F>
-void
-walk_in_postorder(node<T>& node, F function)
-{
-  for (auto&& n : node.children()) {
-    walk_in_postorder(n, function);
-  }
-  function(node);
-}
-
-template<typename T, typename F>
-void
-walk_in_postorder(node<T> const& node, F function)
-{
-  for (auto&& n : node.children()) {
-    walk_in_postorder(n, function);
-  }
-  function(node);
-}
 
 } // namespace tree
 } // namespace once
