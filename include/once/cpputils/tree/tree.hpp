@@ -30,18 +30,22 @@ namespace tree {
 template<typename T>
 class node
 {
+  using const_parent_type =
+    std::optional<std::reference_wrapper<const node<T>>>;
   using parent_type = std::optional<std::reference_wrapper<node<T>>>;
   using children_type = std::list<node<T>>;
   using reference = T&;
   using const_reference = const T&;
 
 public:
-  template<typename... Args>
+  template<typename... Args,
+           std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = true>
   explicit node(Args&&... args)
     : data_{ std::forward<Args>(args)... }
   {}
 
-  parent_type parent() const { return parent_; }
+  parent_type parent() { return parent_; }
+  const_parent_type parent() const { return parent_; }
   children_type const& children() const { return children_; }
 
   template<typename... Args>
@@ -56,6 +60,7 @@ public:
   reference data() { return data_; }
 
   bool operator==(node const& other) const { return &data_ == &other.data_; }
+  bool operator!=(node const& other) const { return !(*this == other); }
 
 private:
   T data_;
