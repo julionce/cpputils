@@ -104,8 +104,15 @@ SCENARIO("is_less_than_comparable trait")
           {
             return data < other.data;
           }
+
+          constexpr bool operator<(int const& other) const
+          {
+            return data < other;
+          }
         };
         REQUIRE(is_less_than_comparable_v<Foo>);
+        REQUIRE(is_less_than_comparable_v<Foo, int>);
+        REQUIRE_FALSE(is_less_than_comparable_v<Foo, Bar>);
         REQUIRE(is_less_than_comparable_v<Bar>);
       }
     }

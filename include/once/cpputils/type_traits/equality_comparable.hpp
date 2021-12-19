@@ -38,8 +38,7 @@ struct is_equality_comparable<Lhs,
 } // namespace detail
 
 template<typename Lhs, typename Rhs = Lhs>
-struct is_equality_comparable
-  : std::disjunction<detail::is_equality_comparable<Lhs, Rhs>>
+struct is_equality_comparable : detail::is_equality_comparable<Lhs, Rhs>
 {
   constexpr bool operator()() { return this->value; }
 };
