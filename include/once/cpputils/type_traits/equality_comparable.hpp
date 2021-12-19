@@ -21,54 +21,36 @@
 namespace once {
 
 namespace detail {
-template<typename T>
-using equality_operator =
-  decltype(std::declval<const T&>().operator==(std::declval<const T&>()));
-
-template<typename T>
-using equality_operator_standalone =
-  decltype(operator==(std::declval<const T&>(), std::declval<const T&>()));
-
-template<typename T, typename = void>
+template<typename Lhs, typename Rhs, typename = void>
 struct is_equality_comparable : std::false_type
 {};
 
-template<typename T>
-struct is_equality_comparable<T, std::void_t<equality_operator<T>>>
-  : std::bool_constant<std::is_same_v<equality_operator<T>, bool>>
-{};
-
-template<typename T, typename = void>
-struct is_equality_comparable_standalone : std::false_type
-{};
-
-template<typename T>
-struct is_equality_comparable_standalone<
-  T,
-  std::void_t<equality_operator_standalone<T>>>
-  : std::bool_constant<std::is_same_v<equality_operator_standalone<T>, bool>>
+template<typename Lhs, typename Rhs>
+struct is_equality_comparable<Lhs,
+                              Rhs,
+                              std::void_t<decltype(std::declval<Lhs const&>() ==
+                                                   std::declval<Rhs const&>())>>
+  : std::bool_constant<std::is_same_v<decltype(std::declval<Lhs const&>() ==
+                                               std::declval<Rhs const&>()),
+                                      bool>>
 {};
 
 } // namespace detail
 
-template<typename T>
+template<typename Lhs, typename Rhs = Lhs>
 struct is_equality_comparable
-  : std::disjunction<std::is_arithmetic<T>,
-                     std::is_enum<T>,
-                     std::is_pointer<T>,
-                     detail::is_equality_comparable<T>,
-                     detail::is_equality_comparable_standalone<T>>
+  : std::disjunction<detail::is_equality_comparable<Lhs, Rhs>>
 {
   constexpr bool operator()() { return this->value; }
 };
 
-template<typename T>
+template<typename Lhs, typename Rhs = Lhs>
 inline constexpr bool is_equality_comparable_v =
-  is_equality_comparable<T>::value;
+  is_equality_comparable<Lhs, Rhs>::value;
 
-template<typename T>
+template<typename Lhs, typename Rhs = Lhs>
 using require_equality_comparable =
-  std::enable_if_t<is_equality_comparable_v<T>>;
+  std::enable_if_t<is_equality_comparable_v<Lhs, Rhs>>;
 
 } // namespace once
 

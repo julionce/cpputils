@@ -92,7 +92,7 @@ SCENARIO("is_equality_comparable trait")
     }
   }
 
-  GIVEN("a type with a user-defined operator<")
+  GIVEN("a type with a user-defined operator==")
   {
 
     WHEN("it is properly defined")
@@ -106,8 +106,16 @@ SCENARIO("is_equality_comparable trait")
           {
             return data == other.data;
           }
+
+          constexpr bool operator==(int const& other) const
+          {
+            return data == other;
+          }
         };
+
         REQUIRE(is_equality_comparable_v<Foo>);
+        REQUIRE(is_equality_comparable_v<Foo, int>);
+        REQUIRE_FALSE(is_equality_comparable_v<Foo, Bar>);
         REQUIRE(is_equality_comparable_v<Bar>);
       }
     }
