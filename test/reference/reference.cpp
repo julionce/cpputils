@@ -304,7 +304,7 @@ using StringRef = once::reference<std::string>;
 
 SCENARIO("Reference initializer_list constructor")
 {
-  StringRef my_string_ref{ 'a', 'b', 'c', 'd' };
+  StringRef my_string_ref{ { 'a', 'b', 'c', 'd' } };
 }
 
 using VariantRef = once::reference<std::variant<int, StringRef>>;

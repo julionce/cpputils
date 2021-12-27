@@ -34,15 +34,16 @@ public:
   template<typename... Args,
            std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = true>
   explicit reference(Args&&... args)
-    : impl_{ std::make_shared<T>(args...) }
+    : impl_{ std::make_shared<T>(std::forward<Args>(args)...) }
   {}
 
-  template<
-    typename U,
-    std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>&>,
-                     bool> = true>
-  explicit reference(std::initializer_list<U> ilist)
-    : impl_{ std::make_shared<T>(T(ilist)) }
+  template<typename U,
+           typename... Args,
+           std::enable_if_t<
+             std::is_constructible_v<T, std::initializer_list<U>&, Args...>,
+             bool> = true>
+  explicit reference(std::initializer_list<U> ilist, Args&&... args)
+    : impl_{ std::make_shared<T>(ilist, std::forward<Args>(args)...) }
   {}
 
   reference(reference const&) = default;
