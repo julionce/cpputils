@@ -319,8 +319,8 @@ SCENARIO("variant reference")
   REQUIRE(std::holds_alternative<StringRef>(my_ref.get()));
   REQUIRE(std::get<StringRef>(my_ref.get()).get() == "world");
 
-  my_ref =
-    VariantRef{ std::in_place_type<StringRef>, { 'h', 'e', 'l', 'l', 'o' } };
+  my_ref = VariantRef{ std::in_place_type<StringRef>,
+                       std::initializer_list<char>{ 'h', 'e', 'l', 'l', 'o' } };
   REQUIRE(std::holds_alternative<StringRef>(my_ref.get()));
   REQUIRE(std::get<StringRef>(my_ref.get()).get() == "hello");
 }
