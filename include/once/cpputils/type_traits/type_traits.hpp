@@ -30,6 +30,25 @@ struct is_variant<std::variant<Types...>> : std::true_type
 
 template<typename T>
 inline constexpr bool is_variant_v = is_variant<T>::value;
+
+template<typename T, typename... Ts>
+struct is_any_of
+{
+  template<typename U>
+  struct same_as : std::disjunction<std::is_same<T, U>, std::is_same<Ts, U>...>
+  {};
+
+  template<typename U>
+  static constexpr bool same_as_v = same_as<U>::value;
+
+  template<typename U, typename... Us>
+  struct same_as_any_of : std::disjunction<same_as<U>, same_as<Us>...>
+  {};
+
+  template<typename U, typename... Us>
+  static constexpr bool same_as_any_of_v = same_as_any_of<U, Us...>::value;
+};
+
 } // namespace once
 
 #include "./equality_comparable.hpp"

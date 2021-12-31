@@ -34,3 +34,15 @@ SCENARIO("is_variant trait")
     THEN("the trait value shall be false") { REQUIRE_FALSE(is_variant_v<int>); }
   }
 }
+
+SCENARIO("is_any_of trait")
+{
+  REQUIRE(is_any_of<int>::same_as_v<int>);
+  REQUIRE_FALSE(is_any_of<int>::same_as_v<bool>);
+  REQUIRE(is_any_of<int, double>::same_as_v<int>);
+  REQUIRE(is_any_of<int, double>::same_as_v<double>);
+  REQUIRE_FALSE(is_any_of<int, double>::same_as_v<bool>);
+  REQUIRE(is_any_of<int>::same_as_any_of_v<int, double>);
+  REQUIRE(is_any_of<double>::same_as_any_of_v<int, double>);
+  REQUIRE_FALSE(is_any_of<bool>::same_as_any_of_v<int, double>);
+}
