@@ -46,6 +46,15 @@ public:
     : impl_{ std::make_shared<T>(ilist, std::forward<Args>(args)...) }
   {}
 
+  template<typename... Args,
+           std::enable_if_t<std::conjunction_v<
+                              std::negation<std::is_constructible<T, Args...>>,
+                              is_aggregate_initializable<T, Args...>>,
+                            bool> = true>
+  explicit reference(Args&&... args)
+    : impl_{ std::shared_ptr<T>(new T{ args... }) }
+  {}
+
   reference(reference const&) = default;
   reference& operator=(reference const&) = default;
 

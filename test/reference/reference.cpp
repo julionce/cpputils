@@ -324,3 +324,15 @@ SCENARIO("variant reference")
   REQUIRE(std::holds_alternative<StringRef>(my_ref.get()));
   REQUIRE(std::get<StringRef>(my_ref.get()).get() == "hello");
 }
+
+struct MyStruct
+{
+  int data;
+};
+
+using MyStructRef = once::reference<MyStruct>;
+
+SCENARIO("struct reference")
+{
+  REQUIRE(std::is_constructible_v<MyStructRef, int>);
+}
