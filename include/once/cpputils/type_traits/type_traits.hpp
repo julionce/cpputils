@@ -51,6 +51,7 @@ struct is_any_of
 
 } // namespace once
 
+#include "./aggregate_initializable.hpp"
 #include "./equality_comparable.hpp"
 #include "./less_than_comparable.hpp"
 

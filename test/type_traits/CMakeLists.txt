@@ -17,6 +17,7 @@ set(_test_name "unit_test_type_traits")
 add_executable(${_test_name} ${CMAKE_CURRENT_SOURCE_DIR}/type_traits.cpp
                              ${CMAKE_CURRENT_SOURCE_DIR}/less_than_comparable.cpp
                              ${CMAKE_CURRENT_SOURCE_DIR}/equality_comparable.cpp
+                             ${CMAKE_CURRENT_SOURCE_DIR}/aggregate_initializable.cpp
     )
 
 target_link_libraries(${_test_name}
