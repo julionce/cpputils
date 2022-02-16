@@ -46,3 +46,26 @@ SCENARIO("is_any_of trait")
   REQUIRE(is_any_of<double>::same_as_any_of_v<int, double>);
   REQUIRE_FALSE(is_any_of<bool>::same_as_any_of_v<int, double>);
 }
+
+SCENARIO("is trait")
+{
+  REQUIRE(is<int>::in<int>::value);
+  REQUIRE(is<int>::in_v<int>);
+  REQUIRE_FALSE(is<int>::in<double>::value);
+  REQUIRE_FALSE(is<int>::in_v<double>);
+
+  REQUIRE(is<int>::in<int, double>::value);
+  REQUIRE(is<int>::in_v<int, double>);
+  REQUIRE_FALSE(is<int>::in<float, double>::value);
+  REQUIRE_FALSE(is<int>::in_v<float, double>);
+
+  REQUIRE(is<int>::in<std::variant<int, double>>::value);
+  REQUIRE(is<int>::in_v<std::variant<int, double>>);
+  REQUIRE_FALSE(is<int>::in<std::variant<float, double>>::value);
+  REQUIRE_FALSE(is<int>::in_v<std::variant<float, double>>);
+
+  REQUIRE(is<int>::in<std::tuple<int, double>>::value);
+  REQUIRE(is<int>::in_v<std::tuple<int, double>>);
+  REQUIRE_FALSE(is<int>::in<std::tuple<float, double>>::value);
+  REQUIRE_FALSE(is<int>::in_v<std::tuple<float, double>>);
+}
