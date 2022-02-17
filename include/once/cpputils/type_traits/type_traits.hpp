@@ -73,5 +73,6 @@ struct is
 #include "./aggregate_initializable.hpp"
 #include "./equality_comparable.hpp"
 #include "./less_than_comparable.hpp"
+#include "./type_container.hpp"
 
 #endif // ONCE__CPPUTILS__TYPE_TRAITS__TYPE_TRAITS_HPP_
