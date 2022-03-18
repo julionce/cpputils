@@ -336,3 +336,67 @@ SCENARIO("struct reference")
 {
   REQUIRE(std::is_constructible_v<MyStructRef, int>);
 }
+
+SCENARIO("reference observers")
+{
+  GIVEN("an once::reference<T>")
+  {
+    once::reference<int> my_ref{ 11 };
+    const once::reference<int> my_const_ref{ 11 };
+
+    THEN("the method get() shall return a reference to the contained value")
+    {
+      REQUIRE(11 == my_ref.get());
+      REQUIRE(11 == my_const_ref.get());
+      REQUIRE(11 == std::move(my_ref).get());
+      REQUIRE(11 == std::move(my_const_ref).get());
+
+      REQUIRE(
+        std::is_same_v<int&,
+                       decltype(std::declval<once::reference<int>&>().get())>);
+      REQUIRE(std::is_same_v<
+              int const&,
+              decltype(std::declval<once::reference<int> const&>().get())>);
+      REQUIRE(
+        std::is_same_v<int&&,
+                       decltype(std::declval<once::reference<int>&&>().get())>);
+      REQUIRE(std::is_same_v<
+              int const&&,
+              decltype(std::declval<once::reference<int> const&&>().get())>);
+    }
+
+    THEN("the operator* shall return a reference to the contained value")
+    {
+      REQUIRE(11 == *my_ref);
+      REQUIRE(11 == *my_const_ref);
+      REQUIRE(11 == *std::move(my_ref));
+      REQUIRE(11 == *std::move(my_const_ref));
+
+      REQUIRE(
+        std::is_same_v<int&, decltype(*std::declval<once::reference<int>&>())>);
+      REQUIRE(
+        std::is_same_v<int const&,
+                       decltype(*std::declval<once::reference<int> const&>())>);
+      REQUIRE(
+        std::is_same_v<int&&,
+                       decltype(*std::declval<once::reference<int>&&>())>);
+      REQUIRE(std::is_same_v<
+              int const&&,
+              decltype(*std::declval<once::reference<int> const&&>())>);
+    }
+
+    THEN("the operator-> shall return a reference to the contained value")
+    {
+      REQUIRE(11 == *my_ref.operator->());
+      REQUIRE(11 == *my_const_ref.operator->());
+
+      REQUIRE(std::is_same_v<
+              int*,
+              decltype(std::declval<once::reference<int>&>().operator->())>);
+      REQUIRE(
+        std::is_same_v<
+          int const*,
+          decltype(std::declval<once::reference<int> const&>().operator->())>);
+    }
+  }
+}

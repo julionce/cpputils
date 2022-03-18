@@ -58,9 +58,25 @@ public:
   reference(reference const&) = default;
   reference& operator=(reference const&) = default;
 
-  T& get() const { return *impl_.get(); }
+  T& get() & { return *impl_.get(); }
 
-  T* operator->() const { return impl_.get(); }
+  T const& get() const& { return *impl_.get(); }
+
+  T&& get() && { return std::move(*impl_.get()); }
+
+  T const&& get() const&& { return std::move(*impl_.get()); }
+
+  T& operator*() & { return *impl_.get(); }
+
+  T const& operator*() const& { return *impl_.get(); }
+
+  T&& operator*() && { return std::move(*impl_.get()); }
+
+  T const&& operator*() const&& { return std::move(*impl_.get()); }
+
+  T* operator->() { return impl_.get(); }
+
+  T const* operator->() const { return impl_.get(); }
 
   friend bool operator<(reference<T> const& lhs, reference<T> const& rhs)
   {
