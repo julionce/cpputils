@@ -49,25 +49,6 @@ struct is_any_of
   static constexpr bool same_as_any_of_v = same_as_any_of<U, Us...>::value;
 };
 
-template<typename T>
-struct is
-{
-  template<typename... Us>
-  struct in : std::disjunction<std::is_same<T, Us>...>
-  {};
-
-  template<typename... Us>
-  struct in<std::variant<Us...>> : in<Us...>
-  {};
-
-  template<typename... Us>
-  struct in<std::tuple<Us...>> : in<Us...>
-  {};
-
-  template<typename... Us>
-  static constexpr bool in_v = in<Us...>::value;
-};
-
 } // namespace once
 
 #include "./aggregate_initializable.hpp"
