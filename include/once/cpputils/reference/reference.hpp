@@ -78,39 +78,43 @@ public:
 
   T const* operator->() const { return impl_.get(); }
 
+  template<typename U = T,
+           std::enable_if_t<is_less_than_comparable_v<U>, bool> = true>
   friend bool operator<(reference<T> const& lhs, reference<T> const& rhs)
   {
-    static_assert(
-      is_less_than_comparable_v<T>,
-      "Error in reference<T>: the type T is not less than comparable");
-
     return (lhs.impl_.get() != rhs.impl_.get()) && *lhs.impl_ < *rhs.impl_;
   }
 
+  template<typename U = T,
+           std::enable_if_t<is_less_than_comparable_v<U>, bool> = true>
   friend bool operator>(reference<T> const& lhs, reference<T> const& rhs)
   {
     return (rhs < lhs);
   }
 
+  template<typename U = T,
+           std::enable_if_t<is_less_than_comparable_v<U>, bool> = true>
   friend bool operator<=(reference<T> const& lhs, reference<T> const& rhs)
   {
     return !(lhs > rhs);
   }
 
+  template<typename U = T,
+           std::enable_if_t<is_less_than_comparable_v<U>, bool> = true>
   friend bool operator>=(reference<T> const& lhs, reference<T> const& rhs)
   {
     return !(lhs < rhs);
   }
 
+  template<typename U = T,
+           std::enable_if_t<is_equality_comparable_v<U>, bool> = true>
   friend bool operator==(reference<T> const& lhs, reference<T> const& rhs)
   {
-    static_assert(
-      is_equality_comparable_v<T>,
-      "Error in reference<T>: the type T is not equality comparable");
-
     return (lhs.impl_.get() == rhs.impl_.get()) || (*lhs.impl_ == *rhs.impl_);
   }
 
+  template<typename U = T,
+           std::enable_if_t<is_equality_comparable_v<U>, bool> = true>
   friend bool operator!=(reference<T> const& lhs, reference<T> const& rhs)
   {
     return !(lhs == rhs);

@@ -51,9 +51,9 @@ private:
 using MyReference = once::reference<MyReferenceImpl>;
 using MyConstReference = once::reference<const MyReferenceImpl>;
 
-SCENARIO("Reference")
+SCENARIO("reference")
 {
-  GIVEN("a Reference")
+  GIVEN("a reference<T>")
   {
     MyReference foo(11, 89);
 
@@ -96,7 +96,7 @@ SCENARIO("Reference")
       REQUIRE(0 == bar->foo());
     }
 
-    THEN("we can generate a constant Reference copying this one")
+    THEN("we can generate a const reference<T> copying this one")
     {
       MyConstReference bar(foo);
       REQUIRE(11 == bar->foo());
@@ -115,7 +115,7 @@ SCENARIO("Reference")
     }
   }
 
-  GIVEN("a constant Reference")
+  GIVEN("a const reference<T>")
   {
     THEN("its constant implementation methods are available")
     {
@@ -130,7 +130,7 @@ SCENARIO("Reference")
     }
   }
 
-  GIVEN("a Reference, its implementation methods are available")
+  GIVEN("a reference<T>, its implementation methods are available")
   {
     MyReference foo(0, 0);
     foo->foo(11);
@@ -138,9 +138,65 @@ SCENARIO("Reference")
   }
 }
 
-SCENARIO("Reference comparison operators")
+struct NotLessThanComparable
+{};
+
+struct LessThanComparable
 {
-  GIVEN("two References foo and bar")
+  bool operator<(LessThanComparable const&) const { return true; }
+};
+
+struct NotEqualityComparable
+{};
+
+struct EqualityComparable
+{
+  bool operator==(EqualityComparable const&) const { return true; }
+};
+
+SCENARIO("reference comparison operators")
+{
+  GIVEN("a type T which is not less than comparable")
+  {
+    REQUIRE_FALSE(once::is_less_than_comparable_v<NotLessThanComparable>);
+    THEN("neither the reference<T> is less than comparable")
+    {
+      REQUIRE_FALSE(once::is_less_than_comparable_v<
+                    once::reference<NotLessThanComparable>>);
+    }
+  }
+
+  GIVEN("a type T which is less than comparable")
+  {
+    REQUIRE(once::is_less_than_comparable_v<LessThanComparable>);
+    THEN("the reference<T> is less than comparable")
+    {
+      REQUIRE(
+        once::is_less_than_comparable_v<once::reference<LessThanComparable>>);
+    }
+  }
+
+  GIVEN("a type T which is not equality comparable")
+  {
+    REQUIRE_FALSE(once::is_equality_comparable_v<NotEqualityComparable>);
+    THEN("neither the reference<T> is equality comparable")
+    {
+      REQUIRE_FALSE(
+        once::is_equality_comparable_v<once::reference<NotEqualityComparable>>);
+    }
+  }
+
+  GIVEN("a type T which is equality comparable")
+  {
+    REQUIRE(once::is_equality_comparable_v<EqualityComparable>);
+    THEN("the reference<T> is equality comparable")
+    {
+      REQUIRE(
+        once::is_equality_comparable_v<once::reference<EqualityComparable>>);
+    }
+  }
+
+  GIVEN("two reference<T>s foo and bar")
   {
     WHEN("foo is less than bar")
     {
@@ -288,9 +344,9 @@ struct ReferenceDerivedImpl : ReferenceBaseImpl
 
 using ReferenceDerived = once::reference<ReferenceDerivedImpl>;
 
-SCENARIO("Reference conversion")
+SCENARIO("reference conversion")
 {
-  GIVEN("a Reference derived")
+  GIVEN("a reference<T> derived")
   {
     ReferenceDerived derived{};
     THEN("it can be converted to Reference base")
@@ -302,7 +358,7 @@ SCENARIO("Reference conversion")
 
 using StringRef = once::reference<std::string>;
 
-SCENARIO("Reference initializer_list constructor")
+SCENARIO("reference initializer_list constructor")
 {
   StringRef my_string_ref{ { 'a', 'b', 'c', 'd' } };
 }
