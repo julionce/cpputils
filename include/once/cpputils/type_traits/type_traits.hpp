@@ -57,6 +57,7 @@ struct is_any_of
 
 #include "./addable.hpp"
 #include "./aggregate_initializable.hpp"
+#include "./divisible.hpp"
 #include "./equality_comparable.hpp"
 #include "./less_than_comparable.hpp"
 #include "./multiplicable.hpp"
