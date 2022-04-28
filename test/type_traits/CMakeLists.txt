@@ -24,6 +24,7 @@ add_executable(${_test_name} ${CMAKE_CURRENT_SOURCE_DIR}/type_traits.cpp
                              ${CMAKE_CURRENT_SOURCE_DIR}/subtractable_unit_test.cpp
                              ${CMAKE_CURRENT_SOURCE_DIR}/multiplicable_unit_test.cpp
                              ${CMAKE_CURRENT_SOURCE_DIR}/divisible_unit_test.cpp
+                             ${CMAKE_CURRENT_SOURCE_DIR}/modulable_unit_test.cpp
     )
 
 target_link_libraries(${_test_name}

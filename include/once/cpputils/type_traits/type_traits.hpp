@@ -60,6 +60,7 @@ struct is_any_of
 #include "./divisible.hpp"
 #include "./equality_comparable.hpp"
 #include "./less_than_comparable.hpp"
+#include "./modulable.hpp"
 #include "./multiplicable.hpp"
 #include "./subtractable.hpp"
 #include "./type_container.hpp"
