@@ -91,7 +91,7 @@ SCENARIO("is_equality_comparable trait")
     }
   }
 
-  GIVEN("a type with a user-defined operator==")
+  GIVEN("a type with an user-defined operator==")
   {
 
     WHEN("it is properly defined")

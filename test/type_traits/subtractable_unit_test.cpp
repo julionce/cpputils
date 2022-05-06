@@ -68,7 +68,7 @@ SCENARIO("is_subtractable trait")
     }
   }
 
-  GIVEN("a type with a user-defined operator+")
+  GIVEN("a type with an user-defined operator+")
   {
     THEN("the trait value shall be true")
     {
