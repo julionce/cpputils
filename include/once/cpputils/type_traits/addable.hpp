@@ -28,9 +28,8 @@ struct is_addable : std::false_type
 };
 
 template<typename T>
-struct is_addable<
-  T,
-  std::void_t<decltype(std::declval<T const&>() + std::declval<T const&>())>>
+struct is_addable<T,
+                  std::void_t<decltype(std::declval<T>() + std::declval<T>())>>
   : std::true_type
 {
 };

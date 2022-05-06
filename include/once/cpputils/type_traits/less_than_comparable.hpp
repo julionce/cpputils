@@ -30,11 +30,9 @@ template<typename Lhs, typename Rhs>
 struct is_less_than_comparable<
   Lhs,
   Rhs,
-  std::void_t<decltype(std::declval<Lhs const&>() <
-                       std::declval<Rhs const&>())>>
-  : std::bool_constant<std::is_same_v<decltype(std::declval<Lhs const&>() <
-                                               std::declval<Rhs const&>()),
-                                      bool>>
+  std::void_t<decltype(std::declval<Lhs>() < std::declval<Rhs>())>>
+  : std::bool_constant<
+      std::is_same_v<decltype(std::declval<Lhs>() < std::declval<Rhs>()), bool>>
 {
 };
 

@@ -30,8 +30,7 @@ struct is_multiplicable : std::false_type
 template<typename T>
 struct is_multiplicable<
   T,
-  std::void_t<decltype(std::declval<T const&>() * std::declval<T const&>())>>
-  : std::true_type
+  std::void_t<decltype(std::declval<T>() * std::declval<T>())>> : std::true_type
 {
 };
 

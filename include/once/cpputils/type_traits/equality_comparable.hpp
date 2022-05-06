@@ -27,13 +27,13 @@ struct is_equality_comparable : std::false_type
 };
 
 template<typename Lhs, typename Rhs>
-struct is_equality_comparable<Lhs,
-                              Rhs,
-                              std::void_t<decltype(std::declval<Lhs const&>() ==
-                                                   std::declval<Rhs const&>())>>
-  : std::bool_constant<std::is_same_v<decltype(std::declval<Lhs const&>() ==
-                                               std::declval<Rhs const&>()),
-                                      bool>>
+struct is_equality_comparable<
+  Lhs,
+  Rhs,
+  std::void_t<decltype(std::declval<Lhs>() == std::declval<Rhs>())>>
+  : std::bool_constant<
+      std::is_same_v<decltype(std::declval<Lhs>() == std::declval<Rhs>()),
+                     bool>>
 {
 };
 
