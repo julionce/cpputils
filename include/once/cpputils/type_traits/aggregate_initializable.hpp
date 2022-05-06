@@ -23,21 +23,24 @@ namespace detail {
 
 template<typename Enable, typename T, typename... Args>
 struct is_aggregate_initializable : std::false_type
-{};
+{
+};
 
 template<typename T, typename... Args>
 struct is_aggregate_initializable<
   std::void_t<decltype(T{ std::declval<Args>()... })>,
   T,
   Args...> : std::is_aggregate<T>
-{};
+{
+};
 
 } // namespace detail
 
 template<typename T, typename... Args>
 struct is_aggregate_initializable
   : detail::is_aggregate_initializable<void, T, Args...>
-{};
+{
+};
 
 template<typename T, typename... Args>
 inline constexpr bool is_aggregate_initializable_v =

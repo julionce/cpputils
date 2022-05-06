@@ -26,12 +26,18 @@ SCENARIO("is_variant trait")
   GIVEN("a variant type")
   {
     using MyVariant = std::variant<int>;
-    THEN("the trait value shall be true") { REQUIRE(is_variant_v<MyVariant>); }
+    THEN("the trait value shall be true")
+    {
+      REQUIRE(is_variant_v<MyVariant>);
+    }
   }
 
   GIVEN("a non-variant type")
   {
-    THEN("the trait value shall be false") { REQUIRE_FALSE(is_variant_v<int>); }
+    THEN("the trait value shall be false")
+    {
+      REQUIRE_FALSE(is_variant_v<int>);
+    }
   }
 }
 

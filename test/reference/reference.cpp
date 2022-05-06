@@ -27,7 +27,8 @@ public:
   MyReferenceImpl(uint8_t foo, uint8_t bar)
     : foo_{ foo }
     , bar_{ bar }
-  {}
+  {
+  }
 
   friend bool operator<(MyReferenceImpl const& lhs, MyReferenceImpl const& rhs)
   {

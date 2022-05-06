@@ -26,7 +26,8 @@ public:
   Foo(int a, double b)
     : a_{ a }
     , b_{ b }
-  {}
+  {
+  }
 
   int get_a() const { return a_; }
   double get_b() const { return b_; }
@@ -45,7 +46,10 @@ SCENARIO("tree::node")
   {
     node root{ 'F' };
 
-    THEN("it shall not have parent") { REQUIRE_FALSE(root.parent()); }
+    THEN("it shall not have parent")
+    {
+      REQUIRE_FALSE(root.parent());
+    }
 
     WHEN("children are added")
     {

@@ -112,7 +112,8 @@ protected:
 
 template<Endian E, typename T>
 struct Stream
-{};
+{
+};
 
 template<Endian E>
 struct Stream<E, std::vector<uint8_t>>

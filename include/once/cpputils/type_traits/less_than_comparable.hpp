@@ -23,7 +23,8 @@ namespace once {
 namespace detail {
 template<typename Lhs, typename Rhs, typename = void>
 struct is_less_than_comparable : std::false_type
-{};
+{
+};
 
 template<typename Lhs, typename Rhs>
 struct is_less_than_comparable<
@@ -34,7 +35,8 @@ struct is_less_than_comparable<
   : std::bool_constant<std::is_same_v<decltype(std::declval<Lhs const&>() <
                                                std::declval<Rhs const&>()),
                                       bool>>
-{};
+{
+};
 
 } // namespace detail
 

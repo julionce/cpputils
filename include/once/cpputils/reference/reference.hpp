@@ -35,7 +35,8 @@ public:
            std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = true>
   explicit reference(Args&&... args)
     : impl_{ std::make_shared<T>(std::forward<Args>(args)...) }
-  {}
+  {
+  }
 
   template<typename U,
            typename... Args,
@@ -44,7 +45,8 @@ public:
              bool> = true>
   explicit reference(std::initializer_list<U> ilist, Args&&... args)
     : impl_{ std::make_shared<T>(ilist, std::forward<Args>(args)...) }
-  {}
+  {
+  }
 
   template<typename... Args,
            std::enable_if_t<std::conjunction_v<
@@ -53,7 +55,8 @@ public:
                             bool> = true>
   explicit reference(Args&&... args)
     : impl_{ std::shared_ptr<T>(new T{ args... }) }
-  {}
+  {
+  }
 
   reference(reference const&) = default;
   reference& operator=(reference const&) = default;
@@ -134,7 +137,8 @@ public:
 private:
   reference(std::shared_ptr<T>&& impl)
     : impl_{ impl }
-  {}
+  {
+  }
 
 protected:
   std::shared_ptr<T> impl_;

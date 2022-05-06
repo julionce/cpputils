@@ -42,7 +42,8 @@ public:
            std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = true>
   explicit node(Args&&... args)
     : data_{ std::forward<Args>(args)... }
-  {}
+  {
+  }
 
   parent_type parent() { return parent_; }
   const_parent_type parent() const { return parent_; }

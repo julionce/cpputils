@@ -51,7 +51,8 @@ public:
     template<class T>
     Identifier(T&& data)
       : data_{ std::forward<T>(data) }
-    {}
+    {
+    }
 
     explicit operator std::string() { return data_; }
 

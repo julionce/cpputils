@@ -23,7 +23,8 @@ namespace once {
 
 template<typename T, typename U>
 struct type_set_constructor
-{};
+{
+};
 
 template<typename T, typename... Ts, typename... Us>
 struct type_set_constructor<type_container<T, Ts...>, type_container<Us...>>
@@ -31,23 +32,27 @@ struct type_set_constructor<type_container<T, Ts...>, type_container<Us...>>
       type_container<Us...>::template includes_v<T>,
       type_set_constructor<type_container<Ts...>, type_container<Us...>>,
       type_set_constructor<type_container<Ts...>, type_container<Us..., T>>>
-{};
+{
+};
 
 template<typename... Us>
 struct type_set_constructor<type_container<>, type_container<Us...>>
   : type_container<Us...>
-{};
+{
+};
 
 template<typename... Ts>
 struct type_set;
 
 template<typename T>
 struct is_type_set : std::false_type
-{};
+{
+};
 
 template<typename... Ts>
 struct is_type_set<type_set<Ts...>> : std::true_type
-{};
+{
+};
 
 template<typename... Ts>
 inline constexpr bool is_type_set_v = is_type_set<Ts...>::value;
@@ -65,7 +70,8 @@ struct type_set : type_set_constructor<type_container<Ts...>, type_container<>>
   struct equal<type_set<Us...>>
     : std::bool_constant<(type_set<Ts...>::size_v == type_set<Us...>::size_v) &&
                          (type_set<Ts...>::template includes_v<Us> && ...)>
-  {};
+  {
+  };
 
   template<typename... Us>
   static constexpr bool equal_v = equal<Us...>::value;

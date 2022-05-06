@@ -1,4 +1,4 @@
 {
   "editor.formatOnSave": true,
-  "C_Cpp.clang_format_fallbackStyle": "Mozilla"
+  "C_Cpp.clang_format_style": "Mozilla"
 }
