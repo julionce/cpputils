@@ -29,6 +29,26 @@ SCENARIO("simple strong_type")
   REQUIRE_FALSE(std::is_same_v<MyStrongTypeFoo, MyStrongTypeBar>);
 }
 
+struct Qux
+{
+  explicit Qux(bool) {}
+};
+
+using MyStrongTypeQux = strong_type<Qux, struct MyStrongTypeQuxTag>;
+
+SCENARIO("strong_type constructor")
+{
+  REQUIRE(std::is_constructible_v<MyStrongTypeQux, bool>);
+  REQUIRE_FALSE(std::is_constructible_v<MyStrongTypeQux>);
+
+  REQUIRE(std::is_constructible_v<MyStrongTypeQux, Qux>);
+  REQUIRE(std::is_constructible_v<MyStrongTypeQux, Qux&&>);
+
+  REQUIRE(std::is_assignable_v<MyStrongTypeQux, Qux>);
+  REQUIRE(std::is_assignable_v<MyStrongTypeQux, Qux&&>);
+  REQUIRE(std::is_assignable_v<MyStrongTypeQux, MyStrongTypeQux>);
+}
+
 using MyEquallyComparableStrongType =
   strong_type<int,
               struct MyEquallyComparableStrongTypeTag,

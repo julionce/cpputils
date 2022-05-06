@@ -29,7 +29,8 @@ public:
   using value_type = T;
 
 public:
-  template<typename... Args>
+  template<typename... Args,
+           std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = true>
   constexpr explicit strong_type(Args&&... args)
     : data_(std::forward<Args>(args)...)
   {
@@ -38,6 +39,12 @@ public:
   strong_type& operator=(T const& data)
   {
     data_ = data;
+    return *this;
+  }
+
+  strong_type& operator=(T&& data)
+  {
+    data_ = std::move(data);
     return *this;
   }
 
@@ -301,8 +308,8 @@ class strong_type
   , public Features<T, strong_type<T, Tag, Features...>>...
 {
 public:
-  using detail::strong_type<int, Tag>::strong_type;
-  using detail::strong_type<int, Tag>::operator=;
+  using detail::strong_type<T, Tag>::strong_type;
+  using detail::strong_type<T, Tag>::operator=;
 };
 
 } // namespace once
