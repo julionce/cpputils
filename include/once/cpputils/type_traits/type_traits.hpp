@@ -63,6 +63,7 @@ struct is_any_of
 #include "./less_than_comparable.hpp"
 #include "./modulable.hpp"
 #include "./multiplicable.hpp"
+#include "./shiftable.hpp"
 #include "./subtractable.hpp"
 #include "./type_container.hpp"
 #include "./type_set.hpp"
