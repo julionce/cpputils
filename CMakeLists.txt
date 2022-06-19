@@ -72,6 +72,7 @@ if(CPPUTILS_BUILD_TESTS)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/stream)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/type_traits)
     add_subdirectory(${PROJECT_SOURCE_DIR}/test/strong_type)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/test/result)
 endif()
 
 ###############################################################################
